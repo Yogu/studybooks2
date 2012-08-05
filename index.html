@@ -10,13 +10,24 @@
 		<script type="text/javascript" src="scripts/jquery-1.7.2.js"></script>
 		<script type="text/javascript" src="scripts/Markdown.Converter.js"></script>
 		<script type="text/javascript" src="scripts/main.js"></script>
+		<script type="text/javascript" src="scripts/test.js"></script>
+		<script type="text/javascript" src="scripts/parser.js"></script>
 	</head>
 	<body>
-		<div id="input-wrap">
-			<textarea id="input"></textarea>
-		</div>
-		<div id="output-wrap">
-			<div id="output"></div>
-		</div>
+		<section id="editor">
+			<h2>Editor</h2>
+			<div id="input-wrap">
+				<textarea id="input"></textarea>
+			</div>
+			<div id="output-wrap">
+				<div id="output"></div>
+			</div>
+		</section>
+		<section id="test">
+			<h2>Tests</h2>
+			<div><button id="run-tests">Run Tests</button></div>
+			<ul id="test-results" class="results")>
+			</ul>
+		</section>
 	</body>
 </html>

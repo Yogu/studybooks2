@@ -1,3 +1,8 @@
+body > * {
+	font-family: Verdana, sans-serif;
+	font-size: 12px;
+}
+
 #input-wrap,
 #output-wrap {
 	width: 50%;
@@ -17,6 +22,15 @@
 
 body {
 	padding: 20px;
+}
+
+h2 {
+	font-size: 16px;
+	font-weight: bold;
+	margin: 1em 0;
+}
+
+#editor {
 	overflow: hidden;
 }
 
@@ -26,4 +40,65 @@ em {
 
 strong {
 	font-weight: bold;
+}
+
+table {
+	width: 100%;
+}
+
+table th,
+table td {
+	padding: 3px;
+	border: 1px solid white;
+}
+
+table th {
+	background: #CCCCCC;
+	font-weight: bold;
+}
+
+table td:nth-child(2n + 1) {
+	background: #DDDDDD;
+}
+
+table td:nth-child(2n) {
+	background: #EEEEEE;
+}
+
+.results li {
+	list-style: none;
+	margin: 0;
+	border-bottom: 1px solid white;
+	padding: 10px;
+}
+
+.results .label {
+	font-weight: bold;
+}
+
+.results .fail .label,
+.results .source {
+	margin-bottom: 0.5em;
+}
+
+.results .source,
+.results .expected-output,
+.results .actual-output {
+	font-family: monospace;
+}
+
+.results .success .source,
+.results .success .expected-output,
+.results .success .actual-output {
+	display: none;
+}
+
+.success {
+	background: #008000 !important;
+	color: white;
+}
+
+.fail {
+	background: #800000 !important;
+	color: white;
 }
