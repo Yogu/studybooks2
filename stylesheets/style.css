@@ -1,0 +1,29 @@
+#input-wrap,
+#output-wrap {
+	width: 50%;
+	float: left;
+}
+
+#input,
+#output {
+	width: 100%;
+	height: 400px;
+	-moz-box-sizing: border-box;
+}
+
+#output {
+	padding: 3px;
+}
+
+body {
+	padding: 20px;
+	overflow: hidden;
+}
+
+em {
+	font-style: italic;
+}
+
+strong {
+	font-weight: bold;
+}
