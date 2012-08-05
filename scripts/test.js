@@ -1,4 +1,7 @@
 (function() {
+	if (!window.app)
+		window.app = { };
+	
 	app.test = { };
 	app.test.ParserTest = function() {
 		var tests = [
@@ -56,7 +59,7 @@
 		
 		this.run = function() {
 			var results = [];
-			var parser = new app.Parser();
+			var parser = new Parser();
 			var overallSuccess = true;
 			for (var i = 0; i < tests.length; i++) {
 				var test = tests[i];

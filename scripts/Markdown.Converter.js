@@ -106,6 +106,9 @@ else
         pluginHooks.addNoop("plainLinkText");  // given a URL that was encountered by itself (without markup), should return the link text that's to be given to this link
         pluginHooks.addNoop("preConversion");  // called with the orignal text as given to makeHtml. The result of this plugin hook is the actual markdown source that will be cooked
         pluginHooks.addNoop("postConversion"); // called with the final cooked HTML code. The result of this plugin hook is the actual output of makeHtml
+        pluginHooks.addNoop("preSpanProcess"); // called whenever the contents of a block element have to be processed, before the Markdown span processors have been run
+        pluginHooks.addNoop("postSpanProcess"); // called whenever the contents of a block element have to be processed, after the Markdown span processors have been run
+
 
         //
         // Private state of the converter instance:
@@ -412,6 +415,8 @@ else
             // tags like paragraphs, headers, and list items.
             //
 
+            text = pluginHooks.preSpanProcess(text);
+
             text = _DoCodeSpans(text);
             text = _EscapeSpecialCharsWithinTagAttributes(text);
             text = _EncodeBackslashEscapes(text);
@@ -433,6 +438,8 @@ else
 
             // Do hard breaks:
             text = text.replace(/\n/g, " <br>\n");
+
+            text = pluginHooks.postSpanProcess(text);
 
             return text;
         }

@@ -35,65 +35,56 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 (at http://www.gnu.org/licences/lgpl.html) for more details.
 */
 
-	var mathcolor = "blue";        // change it to "" (to inherit) or another color
+ASCIIMathML = new (function() {
+	var mathcolor = "blue";        // change it to "" (to inherit) or another
+									// color
 	var mathfontsize = "1em";      // change to e.g. 1.2em for larger math
-	var mathfontfamily = "serif";  // change to "" to inherit (works in IE) 
+	var mathfontfamily = "serif";  // change to "" to inherit (works in IE)
 	                               // or another family (e.g. "arial")
 	var automathrecognize = false; // writing "amath" on page makes this true
 	var checkForMathML = true;     // check if browser can display MathML
-	var notifyIfNoMathML = true;   // display note at top if no MathML capability
+	var notifyIfNoMathML = true;   // display note at top if no MathML
+									// capability
 	var alertIfNoMathML = false;   // show alert box if no MathML capability
-	var translateOnLoad = true;    // set to false to do call translators from js 
+	var translateOnLoad = true;    // set to false to do call translators from
+									// js
 	var translateLaTeX = true;     // false to preserve $..$, $$..$$
-	var translateLaTeXformatting = true; // false to preserve \emph,\begin{},\end{}
+	var translateLaTeXformatting = true; // false to preserve
+											// \emph,\begin{},\end{}
 	var translateASCIIMath = true; // false to preserve `..`
-	var translateASCIIsvg = true;  // false to preserve agraph.., \begin{graph}..
-	var avoidinnerHTML = false;   // set true if assigning to innerHTML gives error
-	var displaystyle = true;      // puts limits above and below large operators
+	var translateASCIIsvg = true;  // false to preserve agraph..,
+									// \begin{graph}..
+	var avoidinnerHTML = false;   // set true if assigning to innerHTML gives
+									// error
+	var displaystyle = true;      // puts limits above and below large
+									// operators
 	var showasciiformulaonhover = true; // helps students learn ASCIIMath
-	var decimalsign = ".";        // change to "," if you like, beware of `(1,2)`!
-	var AMdelimiter1 = "`", AMescape1 = "\\\\`"; // can use other characters
-	var AMdocumentId = "wikitext" // PmWiki element containing math (default=body)
-	var checkforprocessasciimathinmoodle = false; // true for systems like Moodle
-	var dsvglocation = ""; // path to d.svg (blank if same as ASCIIMathML.js loc)
+	var decimalsign = ".";        // change to "," if you like, beware of
+									// `(1,2)`!
+	var AMdelimiter1 = "§";       // can use other characters
+	var AMescape1 = "\\\\" + AMdelimiter1; 
+	var AMdocumentId = "wikitext" // PmWiki element containing math
+									// (default=body)
+	var checkforprocessasciimathinmoodle = false; // true for systems like
+													// Moodle
+	var dsvglocation = ""; // path to d.svg (blank if same as ASCIIMathML.js
+							// loc)
 	
-	/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+	/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 	
-	var isIE = document.createElementNS==null;
+	
 	var noMathML = false, translated = false;
 	
-	if (isIE) { // avoid adding MathPlayer info explicitly to each webpage
-	  document.write("<object id=\"mathplayer\"\
-	  classid=\"clsid:32F66A20-7614-11D4-BD11-00104BD3F987\"></object>");
-	  document.write("<?import namespace=\"m\" implementation=\"#mathplayer\"?>");
-	}
+	// setStylesheet("#AMMLcloseDiv \{font-size:0.8em; padding-top:1em;
+	// color:#014\}\n#AMMLwarningBox \{position:absolute; width:100%; top:0;
+	// left:0; z-index:200; text-align:center; font-size:1em; font-weight:bold;
+	// padding:0.5em 0 0.5em 0; color:#ffc; background:#c30\}");
 	
-	// Add a stylesheet, replacing any previous custom stylesheet (adapted from TW)
-	function setStylesheet(s) {
-		var id = "AMMLcustomStyleSheet";
-		var n = document.getElementById(id);
-		if(document.createStyleSheet) {
-			// Test for IE's non-standard createStyleSheet method
-			if(n)
-				n.parentNode.removeChild(n);
-			// This failed without the &nbsp;
-			document.getElementsByTagName("head")[0].insertAdjacentHTML("beforeEnd","&nbsp;<style id='" + id + "'>" + s + "</style>");
-		} else {
-			if(n) {
-				n.replaceChild(document.createTextNode(s),n.firstChild);
-			} else {
-				n = document.createElement("style");
-				n.type = "text/css";
-				n.id = id;
-				n.appendChild(document.createTextNode(s));
-				document.getElementsByTagName("head")[0].appendChild(n);
-			}
-		}
-	}
-	
-	setStylesheet("#AMMLcloseDiv \{font-size:0.8em; padding-top:1em; color:#014\}\n#AMMLwarningBox \{position:absolute; width:100%; top:0; left:0; z-index:200; text-align:center; font-size:1em; font-weight:bold; padding:0.5em 0 0.5em 0; color:#ffc; background:#c30\}");
-	
+	var isInitialized = false;
 	function init(){
+		if (isInitialized)
+			return;
+		
 		var msg, warnings = new Array();
 		if (document.getElementById==null){
 			alert("This webpage requires a recent browser such as Mozilla Firefox/Netscape 7+ or Internet Explorer 6+ with MathPlayer and Adobe SVGviewer");
@@ -120,7 +111,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  else if (navigator.appName.slice(0,5)=="Opera") 
 	    if (navigator.appVersion.slice(0,3)>="9.5") noMathML = null;
 	  else noMathML = true;
-	//noMathML = true; //uncomment to check
+	// noMathML = true; //uncomment to check
 	  if (noMathML && notifyIfNoMathML) {
 	    var msg = "To view the ASCIIMathML notation use Internet Explorer + MathPlayer or Mozilla Firefox 2.0 or later.";
 	    if (alertIfNoMathML)
@@ -172,13 +163,11 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	}
 	
 	function createElementXHTML(t) {
-	  if (isIE) return document.createElement(t);
-	  else return document.createElementNS("http://www.w3.org/1999/xhtml",t);
+	  return document.createElement(t);
 	}
 	
 	function createMmlNode(t,frag) {
-	  if (isIE) var node = document.createElement("m:"+t);
-	  else var node = document.createElementNS("http://www.w3.org/1998/Math/MathML",t);
+	var node = document.createElementNS("http://www.w3.org/1998/Math/MathML",t);
 	  if (frag) node.appendChild(frag);
 	  return node;
 	}
@@ -196,7 +185,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	var AMquote = {input:"\"",   tag:"mtext", output:"mbox", tex:null, ttype:TEXT};
 	
 	var AMsymbols = [
-	//some greek symbols
+	// some greek symbols
 	{input:"alpha",  tag:"mi", output:"\u03B1", tex:null, ttype:CONST},
 	{input:"beta",   tag:"mi", output:"\u03B2", tex:null, ttype:CONST},
 	{input:"chi",    tag:"mi", output:"\u03C7", tex:null, ttype:CONST},
@@ -234,8 +223,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"Xi",     tag:"mo", output:"\u039E", tex:null, ttype:CONST},
 	{input:"zeta",   tag:"mi", output:"\u03B6", tex:null, ttype:CONST},
 	
-	//binary operation symbols
-	//{input:"-",  tag:"mo", output:"\u0096", tex:null, ttype:CONST},
+	// binary operation symbols
+	// {input:"-", tag:"mo", output:"\u0096", tex:null, ttype:CONST},
 	{input:"*",  tag:"mo", output:"\u22C5", tex:"cdot", ttype:CONST},
 	{input:"**", tag:"mo", output:"\u22C6", tex:"star", ttype:CONST},
 	{input:"//", tag:"mo", output:"/",      tex:null, ttype:CONST},
@@ -258,7 +247,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"uu",  tag:"mo", output:"\u222A", tex:"cup", ttype:CONST},
 	{input:"uuu", tag:"mo", output:"\u22C3", tex:"bigcup", ttype:UNDEROVER},
 	
-	//binary relation symbols
+	// binary relation symbols
 	{input:"!=",  tag:"mo", output:"\u2260", tex:"ne", ttype:CONST},
 	{input:":=",  tag:"mo", output:":=",     tex:null, ttype:CONST},
 	{input:"lt",  tag:"mo", output:"<",      tex:null, ttype:CONST},
@@ -282,7 +271,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"~~",  tag:"mo", output:"\u2248", tex:"approx", ttype:CONST},
 	{input:"prop", tag:"mo", output:"\u221D", tex:"propto", ttype:CONST},
 	
-	//logical symbols
+	// logical symbols
 	{input:"and", tag:"mtext", output:"and", tex:null, ttype:SPACE},
 	{input:"or",  tag:"mtext", output:"or",  tex:null, ttype:SPACE},
 	{input:"not", tag:"mo", output:"\u00AC", tex:"neg", ttype:CONST},
@@ -296,7 +285,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"|--",  tag:"mo", output:"\u22A2", tex:"vdash", ttype:CONST},
 	{input:"|==",  tag:"mo", output:"\u22A8", tex:"models", ttype:CONST},
 	
-	//grouping brackets
+	// grouping brackets
 	{input:"(", tag:"mo", output:"(", tex:null, ttype:LEFTBRACKET},
 	{input:")", tag:"mo", output:")", tex:null, ttype:RIGHTBRACKET},
 	{input:"[", tag:"mo", output:"[", tex:null, ttype:LEFTBRACKET},
@@ -304,7 +293,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"{", tag:"mo", output:"{", tex:null, ttype:LEFTBRACKET},
 	{input:"}", tag:"mo", output:"}", tex:null, ttype:RIGHTBRACKET},
 	{input:"|", tag:"mo", output:"|", tex:null, ttype:LEFTRIGHT},
-	//{input:"||", tag:"mo", output:"||", tex:null, ttype:LEFTRIGHT},
+	// {input:"||", tag:"mo", output:"||", tex:null, ttype:LEFTRIGHT},
 	{input:"(:", tag:"mo", output:"\u2329", tex:"langle", ttype:LEFTBRACKET},
 	{input:":)", tag:"mo", output:"\u232A", tex:"rangle", ttype:RIGHTBRACKET},
 	{input:"<<", tag:"mo", output:"\u2329", tex:null, ttype:LEFTBRACKET},
@@ -312,7 +301,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"{:", tag:"mo", output:"{:", tex:null, ttype:LEFTBRACKET, invisible:true},
 	{input:":}", tag:"mo", output:":}", tex:null, ttype:RIGHTBRACKET, invisible:true},
 	
-	//miscellaneous symbols
+	// miscellaneous symbols
 	{input:"int",  tag:"mo", output:"\u222B", tex:null, ttype:CONST},
 	{input:"dx",   tag:"mi", output:"{:d x:}", tex:null, ttype:DEFINITION},
 	{input:"dy",   tag:"mi", output:"{:d y:}", tex:null, ttype:DEFINITION},
@@ -348,7 +337,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"f",   tag:"mi", output:"f",      tex:null, ttype:UNARY, func:true},
 	{input:"g",   tag:"mi", output:"g",      tex:null, ttype:UNARY, func:true},
 	
-	//standard functions
+	// standard functions
 	{input:"lim",  tag:"mo", output:"lim", tex:null, ttype:UNDEROVER},
 	{input:"Lim",  tag:"mo", output:"Lim", tex:null, ttype:UNDEROVER},
 	{input:"sin",  tag:"mo", output:"sin", tex:null, ttype:UNARY, func:true},
@@ -372,7 +361,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"min",  tag:"mo", output:"min", tex:null, ttype:UNDEROVER},
 	{input:"max",  tag:"mo", output:"max", tex:null, ttype:UNDEROVER},
 	
-	//arrows
+	// arrows
 	{input:"uarr", tag:"mo", output:"\u2191", tex:"uparrow", ttype:CONST},
 	{input:"darr", tag:"mo", output:"\u2193", tex:"downarrow", ttype:CONST},
 	{input:"rarr", tag:"mo", output:"\u2192", tex:"rightarrow", ttype:CONST},
@@ -386,7 +375,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"rArr", tag:"mo", output:"\u21D2", tex:"Rightarrow", ttype:CONST},
 	{input:"lArr", tag:"mo", output:"\u21D0", tex:"Leftarrow", ttype:CONST},
 	{input:"hArr", tag:"mo", output:"\u21D4", tex:"Leftrightarrow", ttype:CONST},
-	//commands with argument
+	// commands with argument
 	{input:"sqrt", tag:"msqrt", output:"sqrt", tex:null, ttype:UNARY},
 	{input:"root", tag:"mroot", output:"root", tex:null, ttype:BINARY},
 	{input:"frac", tag:"mfrac", output:"/",    tex:null, ttype:BINARY},
@@ -422,7 +411,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  else return -1;
 	}
 	
-	var AMnames = []; //list of input symbols
+	var AMnames = []; // list of input symbols
 	
 	function initSymbols() {
 	  var texsymbols = [], i;
@@ -453,7 +442,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	}
 	
 	function AMremoveCharsAndBlanks(str,n) {
-	//remove n characters and any following blanks
+	// remove n characters and any following blanks
 	  var st;
 	  if (str.charAt(n)=="\\" && str.charAt(n+1)!="\\" && str.charAt(n+1)!=" ") 
 	    st = str.slice(n+1);
@@ -480,17 +469,17 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	}
 	
 	function AMgetSymbol(str) {
-	//return maximal initial substring of str that appears in names
-	//return null if there is none
-	  var k = 0; //new pos
-	  var j = 0; //old pos
-	  var mk; //match pos
+	// return maximal initial substring of str that appears in names
+	// return null if there is none
+	  var k = 0; // new pos
+	  var j = 0; // old pos
+	  var mk; // match pos
 	  var st;
 	  var tagst;
 	  var match = "";
 	  var more = true;
 	  for (var i=1; i<=str.length && more; i++) {
-	    st = str.slice(0,i); //initial substring of length i
+	    st = str.slice(0,i); // initial substring of length i
 	    j = k;
 	    k = position(AMnames, st, j);
 	    if (k<AMnames.length && str.slice(0,AMnames[k].length)==AMnames[k]){
@@ -530,11 +519,12 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    tagst = "mn";
 	  } else {
 	    k = 2;
-	    st = str.slice(0,1); //take 1 character
+	    st = str.slice(0,1); // take 1 character
 	    tagst = (("A">st || st>"Z") && ("a">st || st>"z")?"mo":"mi");
 	  }
 	  if (st=="-" && AMpreviousSymbol==INFIX) {
-	    AMcurrentSymbol = INFIX;  //trick "/" into recognizing "-" on second parse
+	    AMcurrentSymbol = INFIX;  // trick "/" into recognizing "-" on second
+									// parse
 	    return {input:st, tag:tagst, output:st, ttype:UNARY, func:true};
 	  }
 	  return {input:st, tag:tagst, output:st, ttype:CONST};
@@ -552,24 +542,24 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  }
 	}
 	
-	/*Parsing ASCII math expressions with the following grammar
-	v ::= [A-Za-z] | greek letters | numbers | other constant symbols
-	u ::= sqrt | text | bb | other unary symbols for font commands
-	b ::= frac | root | stackrel         binary symbols
-	l ::= ( | [ | { | (: | {:            left brackets
-	r ::= ) | ] | } | :) | :}            right brackets
-	S ::= v | lEr | uS | bSS             Simple expression
-	I ::= S_S | S^S | S_S^S | S          Intermediate expression
-	E ::= IE | I/I                       Expression
-	Each terminal symbol is translated into a corresponding mathml node.*/
+	/*
+	 * Parsing ASCII math expressions with the following grammar v ::= [A-Za-z] |
+	 * greek letters | numbers | other constant symbols u ::= sqrt | text | bb |
+	 * other unary symbols for font commands b ::= frac | root | stackrel binary
+	 * symbols l ::= ( | [ | { | (: | {: left brackets r ::= ) | ] | } | :) | :}
+	 * right brackets S ::= v | lEr | uS | bSS Simple expression I ::= S_S | S^S |
+	 * S_S^S | S Intermediate expression E ::= IE | I/I Expression Each terminal
+	 * symbol is translated into a corresponding mathml node.
+	 */
 	
 	var AMnestingDepth,AMpreviousSymbol,AMcurrentSymbol;
 	
-	function AMparseSexpr(str) { //parses str and returns [node,tailstr]
+	function AMparseSexpr(str) { // parses str and returns [node,tailstr]
 	  var symbol, node, result, i, st,// rightvert = false,
 	    newFrag = document.createDocumentFragment();
 	  str = AMremoveCharsAndBlanks(str,0);
-	  symbol = AMgetSymbol(str);             //either a token or a bracket or empty
+	  symbol = AMgetSymbol(str);             // either a token or a bracket
+												// or empty
 	  if (symbol == null || symbol.ttype == RIGHTBRACKET && AMnestingDepth > 0) {
 	    return [null,str];
 	  }
@@ -580,9 +570,9 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  switch (symbol.ttype) {  case UNDEROVER:
 	  case CONST:
 	    str = AMremoveCharsAndBlanks(str,symbol.input.length); 
-	    return [createMmlNode(symbol.tag,        //its a constant
+	    return [createMmlNode(symbol.tag,        // its a constant
 	                             document.createTextNode(symbol.output)),str];
-	  case LEFTBRACKET:   //read (expr+)
+	  case LEFTBRACKET:   // read (expr+)
 	    AMnestingDepth++;
 	    str = AMremoveCharsAndBlanks(str,symbol.input.length); 
 	    result = AMparseExpr(str,true);
@@ -623,7 +613,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      result = AMparseSexpr(str);
 	      if (result[0]==null) return [createMmlNode(symbol.tag,
 	                             document.createTextNode(symbol.output)),str];
-	      if (typeof symbol.func == "boolean" && symbol.func) { // functions hack
+	      if (typeof symbol.func == "boolean" && symbol.func) { // functions
+																// hack
 	        st = str.charAt(0);
 	        if (st=="^" || st=="_" || st=="/" || st=="|" || st==",") {
 	          return [createMmlNode(symbol.tag,
@@ -643,7 +634,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	        node.appendChild(createMmlNode("mo",document.createTextNode(symbol.output)));
 	        return [node,result[1]];
 	      } else {                        // font change command
-	        if (!isIE && typeof symbol.codes != "undefined") {
+	        if (typeof symbol.codes != "undefined") {
 	          for (i=0; i<result[0].childNodes.length; i++)
 	            if (result[0].childNodes[i].nodeName=="mi" || result[0].nodeName=="mi") {
 	              st = (result[0].nodeName=="mi"?result[0].firstChild.nodeValue:
@@ -695,7 +686,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    newFrag.appendChild(node);
 	    return [createMmlNode("mrow",newFrag),str];
 	  case LEFTRIGHT:
-	//    if (rightvert) return [null,str]; else rightvert = true;
+	// if (rightvert) return [null,str]; else rightvert = true;
 	    AMnestingDepth++;
 	    str = AMremoveCharsAndBlanks(str,symbol.input.length); 
 	    result = AMparseExpr(str,false);
@@ -708,15 +699,16 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      node = createMmlNode("mrow",node);
 	      node.appendChild(result[0]);
 	      return [node,result[1]];
-	    } else { // the "|" is a \mid so use unicode 2223 (divides) for spacing
+	    } else { // the "|" is a \mid so use unicode 2223 (divides) for
+					// spacing
 	      node = createMmlNode("mo",document.createTextNode("\u2223"));
 	      node = createMmlNode("mrow",node);
 	      return [node,str];
 	    }
 	  default:
-	//alert("default");
+	// alert("default");
 	    str = AMremoveCharsAndBlanks(str,symbol.input.length); 
-	    return [createMmlNode(symbol.tag,        //its a constant
+	    return [createMmlNode(symbol.tag,        // its a constant
 	                             document.createTextNode(symbol.output)),str];
 	  }
 	}
@@ -731,13 +723,13 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  symbol = AMgetSymbol(str);
 	  if (symbol.ttype == INFIX && symbol.input != "/") {
 	    str = AMremoveCharsAndBlanks(str,symbol.input.length);
-	//    if (symbol.input == "/") result = AMparseIexpr(str); else ...
+	// if (symbol.input == "/") result = AMparseIexpr(str); else ...
 	    result = AMparseSexpr(str);
 	    if (result[0] == null) // show box in place of missing argument
 	      result[0] = createMmlNode("mo",document.createTextNode("\u25A1"));
 	    else AMremoveBrackets(result[0]);
 	    str = result[1];
-	//    if (symbol.input == "/") AMremoveBrackets(node);
+	// if (symbol.input == "/") AMremoveBrackets(node);
 	    if (symbol.input == "_") {
 	      sym2 = AMgetSymbol(str);
 	      underover = (sym1.ttype == UNDEROVER);
@@ -789,11 +781,11 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	           (symbol.ttype != LEFTRIGHT || rightbracket)
 	           || AMnestingDepth == 0) && symbol!=null && symbol.output!="");
 	  if (symbol.ttype == RIGHTBRACKET || symbol.ttype == LEFTRIGHT) {
-	//    if (AMnestingDepth > 0) AMnestingDepth--;
+	// if (AMnestingDepth > 0) AMnestingDepth--;
 	    var len = newFrag.childNodes.length;
 	    if (len>0 && newFrag.childNodes[len-1].nodeName == "mrow" && len>1 &&
 	      newFrag.childNodes[len-2].nodeName == "mo" &&
-	      newFrag.childNodes[len-2].firstChild.nodeValue == ",") { //matrix
+	      newFrag.childNodes[len-2].firstChild.nodeValue == ",") { // matrix
 	      var right = newFrag.childNodes[len-1].lastChild.firstChild.nodeValue;
 	      if (right==")" || right=="]") {
 	        var left = newFrag.childNodes[len-1].firstChild.firstChild.nodeValue;
@@ -824,18 +816,19 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	            node = newFrag.firstChild; // <mrow>(-,-,...,-,-)</mrow>
 	            n = node.childNodes.length;
 	            k = 0;
-	            node.removeChild(node.firstChild); //remove (
+	            node.removeChild(node.firstChild); // remove (
 	            for (j=1; j<n-1; j++) {
 	              if (typeof pos[i][k] != "undefined" && j==pos[i][k]){
-	                node.removeChild(node.firstChild); //remove ,
+	                node.removeChild(node.firstChild); // remove ,
 	                row.appendChild(createMmlNode("mtd",frag));
 	                k++;
 	              } else frag.appendChild(node.firstChild);
 	            }
 	            row.appendChild(createMmlNode("mtd",frag));
 	            if (newFrag.childNodes.length>2) {
-	              newFrag.removeChild(newFrag.firstChild); //remove <mrow>)</mrow>
-	              newFrag.removeChild(newFrag.firstChild); //remove <mo>,</mo>
+	              newFrag.removeChild(newFrag.firstChild); // remove
+															// <mrow>)</mrow>
+	              newFrag.removeChild(newFrag.firstChild); // remove <mo>,</mo>
 	            }
 	            table.appendChild(createMmlNode("mtr",row));
 	          }
@@ -859,14 +852,11 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  var frag, node;
 	  AMnestingDepth = 0;
 	  frag = latex ? LMparseExpr(str.replace(/^\s+/g,""),false,false)[0] : AMparseExpr(str.replace(/^\s+/g,""),false)[0];
-	  node = createMmlNode("mstyle",frag);
-	  node.setAttribute("mathcolor",mathcolor);
-	  node.setAttribute("fontfamily",mathfontfamily);
-	  node.setAttribute("mathsize",mathfontsize);
-	  if (displaystyle) node.setAttribute("displaystyle","true");
-	  node = createMmlNode("math",node);
-	  if (showasciiformulaonhover)                      //fixed by djhsu so newline
-	    node.setAttribute("title",str.replace(/\s+/g," "));//does not show in Gecko
+	  node = createMmlNode("math",frag);
+	  if (showasciiformulaonhover)                      // fixed by djhsu so
+														// newline
+	    node.setAttribute("title",str.replace(/\s+/g," "));// does not show in
+															// Gecko
 	  return node;
 	}
 	
@@ -891,29 +881,38 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	}
 	
 	function AMautomathrec(str) {
-	//formula is a space (or start of str) followed by a maximal sequence of *two* or more tokens, possibly separated by runs of digits and/or space.
-	//tokens are single letters (except a, A, I) and ASCIIMathML tokens
+	// formula is a space (or start of str) followed by a maximal sequence of
+	// *two* or more tokens, possibly separated by runs of digits and/or space.
+	// tokens are single letters (except a, A, I) and ASCIIMathML tokens
 	  var texcommand = "\\\\[a-zA-Z]+|\\\\\\s|";
 	  var ambigAMtoken = "\\b(?:oo|lim|ln|int|oint|del|grad|aleph|prod|prop|sinh|cosh|tanh|cos|sec|pi|tt|fr|sf|sube|supe|sub|sup|det|mod|gcd|lcm|min|max|vec|ddot|ul|chi|eta|nu|mu)(?![a-z])|";
 	  var englishAMtoken = "\\b(?:sum|ox|log|sin|tan|dim|hat|bar|dot)(?![a-z])|";
-	  var secondenglishAMtoken = "|\\bI\\b|\\bin\\b|\\btext\\b"; // took if and or not out
-	  var simpleAMtoken = "NN|ZZ|QQ|RR|CC|TT|AA|EE|sqrt|dx|dy|dz|dt|xx|vv|uu|nn|bb|cc|csc|cot|alpha|beta|delta|Delta|epsilon|gamma|Gamma|kappa|lambda|Lambda|omega|phi|Phi|Pi|psi|Psi|rho|sigma|Sigma|tau|theta|Theta|xi|Xi|zeta"; // uuu nnn?
+	  var secondenglishAMtoken = "|\\bI\\b|\\bin\\b|\\btext\\b"; // took if
+																	// and or
+																	// not out
+	  var simpleAMtoken = "NN|ZZ|QQ|RR|CC|TT|AA|EE|sqrt|dx|dy|dz|dt|xx|vv|uu|nn|bb|cc|csc|cot|alpha|beta|delta|Delta|epsilon|gamma|Gamma|kappa|lambda|Lambda|omega|phi|Phi|Pi|psi|Psi|rho|sigma|Sigma|tau|theta|Theta|xi|Xi|zeta"; // uuu
+																																																									// nnn?
 	  var letter = "[a-zA-HJ-Z](?=(?:[^a-zA-Z]|$|"+ambigAMtoken+englishAMtoken+simpleAMtoken+"))|";
 	  var token = letter+texcommand+"\\d+|[-()[\\]{}+=*&^_%\\\@/<>,\\|!:;'~]|\\.(?!(?:\x20|$))|"+ambigAMtoken+englishAMtoken+simpleAMtoken;
 	  var re = new RegExp("(^|\\s)((("+token+")\\s?)(("+token+secondenglishAMtoken+")\\s?)+)([,.?]?(?=\\s|$))","g");
 	  str = str.replace(re," `$2`$7");
 	  var arr = str.split(AMdelimiter1);
 	  var re1 = new RegExp("(^|\\s)([b-zB-HJ-Z+*<>]|"+texcommand+ambigAMtoken+simpleAMtoken+")(\\s|\\n|$)","g");
-	  var re2 = new RegExp("(^|\\s)([a-z]|"+texcommand+ambigAMtoken+simpleAMtoken+")([,.])","g"); // removed |\d+ for now
-	  for (i=0; i<arr.length; i++)   //single nonenglish tokens
+	  var re2 = new RegExp("(^|\\s)([a-z]|"+texcommand+ambigAMtoken+simpleAMtoken+")([,.])","g"); // removed
+																									// |\d+
+																									// for
+																									// now
+	  for (i=0; i<arr.length; i++)   // single nonenglish tokens
 	    if (i%2==0) {
 	      arr[i] = arr[i].replace(re1," `$2`$3");
 	      arr[i] = arr[i].replace(re2," `$2`$3");
 	      arr[i] = arr[i].replace(/([{}[\]])/,"`$1`");
 	    }
 	  str = arr.join(AMdelimiter1);
-	  str = str.replace(/((^|\s)\([a-zA-Z]{2,}.*?)\)`/g,"$1`)");  //fix parentheses
-	  str = str.replace(/`(\((a\s|in\s))(.*?[a-zA-Z]{2,}\))/g,"$1`$3");  //fix parentheses
+	  str = str.replace(/((^|\s)\([a-zA-Z]{2,}.*?)\)`/g,"$1`)");  // fix
+																	// parentheses
+	  str = str.replace(/`(\((a\s|in\s))(.*?[a-zA-Z]{2,}\))/g,"$1`$3");  // fix
+																			// parentheses
 	  str = str.replace(/\sin`/g,"` in");
 	  str = str.replace(/`(\(\w\)[,.]?(\s|\n|$))/g,"$1`");
 	  str = str.replace(/`([0-9.]+|e.g|i.e)`(\.?)/gi,"$1$2");
@@ -926,8 +925,11 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  if (n.childNodes.length == 0) {
 	   if ((n.nodeType!=8 || linebreaks) &&
 	    n.parentNode.nodeName!="form" && n.parentNode.nodeName!="FORM" &&
-	    n.parentNode.nodeName!="textarea" && n.parentNode.nodeName!="TEXTAREA" /*&&
-	    n.parentNode.nodeName!="pre" && n.parentNode.nodeName!="PRE"*/) {
+	    n.parentNode.nodeName!="textarea" && n.parentNode.nodeName!="TEXTAREA" /*
+																				 * &&
+																				 * n.parentNode.nodeName!="pre" &&
+																				 * n.parentNode.nodeName!="PRE"
+																				 */) {
 	    str = n.nodeValue;
 	    if (!(str == null)) {
 	      str = str.replace(/\r\n\r\n/g,"\n\n");
@@ -986,83 +988,80 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    try {
 	      st = n.innerHTML; // look for AMdelimiter on page
 	    } catch(err) {}
-	//alert(st)
+	// alert(st)
 	    if (st==null || /amath\b|\\begin{a?math}/i.test(st) ||
 	      st.indexOf(AMdelimiter1+" ")!=-1 || st.slice(-1)==AMdelimiter1 ||
 	      st.indexOf(AMdelimiter1+"<")!=-1 || st.indexOf(AMdelimiter1+"\n")!=-1) {
 	      processNodeR(n,linebreaks,false);
 	    }
 	  }
-	/*  if (isIE) { //needed to match size and font of formula to surrounding text
-	    frag = document.getElementsByTagName('math');
-	    for (var i=0;i<frag.length;i++) frag[i].update() //What is this?
-	  }*/
+	/*
+	 * if (isIE) { //needed to match size and font of formula to surrounding
+	 * text frag = document.getElementsByTagName('math'); for (var i=0;i<frag.length;i++)
+	 * frag[i].update() //What is this? }
+	 */
 	}
 	
 	/*
-	LaTeXMathML.js
-	==============
-	
-	Version 1.1, July 20, 2007 (c) modifications by Peter Jipsen
-	
-	(changes: renamed global variables from AM... to LM... so that
-	LaTeXMathML and ASCIIMathML can be used simultaneously)
-	
-	Previous header notice:
-	This file (Version 1.0), is due to Douglas Woodall, June 2006.
-	It contains JavaScript functions to convert (most simple) LaTeX
-	math notation to Presentation MathML.  It was obtained by
-	downloading the file ASCIIMathML.js from
-		http://www1.chapman.edu/~jipsen/mathml/asciimathdownload/
-	and modifying it so that it carries out ONLY those conversions
-	that would be carried out in LaTeX.  A description of the original
-	file, with examples, can be found at
-		www1.chapman.edu/~jipsen/mathml/asciimath.html
-		ASCIIMathML: Math on the web for everyone
-	
-	Here is the header notice from the original file:
-	
-	ASCIIMathML.js
-	==============
-	This file contains JavaScript functions to convert ASCII math notation
-	to Presentation MathML. The conversion is done while the (X)HTML page
-	loads, and should work with Firefox/Mozilla/Netscape 7+ and Internet
-	Explorer 6+MathPlayer (http://www.dessci.com/en/products/mathplayer/).
-	Just add the next line to your (X)HTML page with this file in the same folder:
-	<script type="text/javascript" src="ASCIIMathML.js"></script>
-	This is a convenient and inexpensive solution for authoring MathML.
-	
-	Version 1.4.7 Dec 15, 2005, (c) Peter Jipsen http://www.chapman.edu/~jipsen
-	Latest version at http://www.chapman.edu/~jipsen/mathml/ASCIIMathML.js
-	For changes see http://www.chapman.edu/~jipsen/mathml/asciimathchanges.txt
-	If you use it on a webpage, please send the URL to jipsen@chapman.edu
-	
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU Lesser General Public License as published by
-	the Free Software Foundation; either version 2.1 of the License, or (at
-	your option) any later version.
-	
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
-	General Public License (at http://www.gnu.org/license/lgpl.html)
-	for more details.
-	
-	LaTeXMathML.js (ctd)
-	==============
-	
-	Content between $...$ and $$...$$ is converted by this part of the file
-	*/
+	 * LaTeXMathML.js ==============
+	 * 
+	 * Version 1.1, July 20, 2007 (c) modifications by Peter Jipsen
+	 * 
+	 * (changes: renamed global variables from AM... to LM... so that
+	 * LaTeXMathML and ASCIIMathML can be used simultaneously)
+	 * 
+	 * Previous header notice: This file (Version 1.0), is due to Douglas
+	 * Woodall, June 2006. It contains JavaScript functions to convert (most
+	 * simple) LaTeX math notation to Presentation MathML. It was obtained by
+	 * downloading the file ASCIIMathML.js from
+	 * http://www1.chapman.edu/~jipsen/mathml/asciimathdownload/ and modifying
+	 * it so that it carries out ONLY those conversions that would be carried
+	 * out in LaTeX. A description of the original file, with examples, can be
+	 * found at www1.chapman.edu/~jipsen/mathml/asciimath.html ASCIIMathML: Math
+	 * on the web for everyone
+	 * 
+	 * Here is the header notice from the original file:
+	 * 
+	 * ASCIIMathML.js ============== This file contains JavaScript functions to
+	 * convert ASCII math notation to Presentation MathML. The conversion is
+	 * done while the (X)HTML page loads, and should work with
+	 * Firefox/Mozilla/Netscape 7+ and Internet Explorer 6+MathPlayer
+	 * (http://www.dessci.com/en/products/mathplayer/). Just add the next line
+	 * to your (X)HTML page with this file in the same folder: <script
+	 * type="text/javascript" src="ASCIIMathML.js"></script> This is a
+	 * convenient and inexpensive solution for authoring MathML.
+	 * 
+	 * Version 1.4.7 Dec 15, 2005, (c) Peter Jipsen
+	 * http://www.chapman.edu/~jipsen Latest version at
+	 * http://www.chapman.edu/~jipsen/mathml/ASCIIMathML.js For changes see
+	 * http://www.chapman.edu/~jipsen/mathml/asciimathchanges.txt If you use it
+	 * on a webpage, please send the URL to jipsen@chapman.edu
+	 * 
+	 * This program is free software; you can redistribute it and/or modify it
+	 * under the terms of the GNU Lesser General Public License as published by
+	 * the Free Software Foundation; either version 2.1 of the License, or (at
+	 * your option) any later version.
+	 * 
+	 * This program is distributed in the hope that it will be useful, but
+	 * WITHOUT ANY WARRANTY; without even the implied warranty of
+	 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+	 * General Public License (at http://www.gnu.org/license/lgpl.html) for more
+	 * details.
+	 * 
+	 * LaTeXMathML.js (ctd) ==============
+	 * 
+	 * Content between $...$ and $$...$$ is converted by this part of the file
+	 */
 	
 	// all further global variables start with "LM"
 	
 	// Commented out by DRW to prevent 1/2 turning into a 2-line fraction
-	// LMdiv   = {input:"/",	 tag:"mfrac", output:"/",    ttype:INFIX},
+	// LMdiv = {input:"/", tag:"mfrac", output:"/", ttype:INFIX},
 	// Commented out by DRW so that " prints literally in equations
-	// LMquote = {input:"\"",	 tag:"mtext", output:"mbox", ttype:TEXT};
+	// LMquote = {input:"\"", tag:"mtext", output:"mbox", ttype:TEXT};
 	
 	var LMsymbols = [
-	//Greek letters
+	// Greek letters
 	{input:"\\alpha",	tag:"mi", output:"\u03B1", ttype:CONST},
 	{input:"\\beta",	tag:"mi", output:"\u03B2", ttype:CONST},
 	{input:"\\gamma",	tag:"mi", output:"\u03B3", ttype:CONST},
@@ -1104,7 +1103,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\Psi",		tag:"mo", output:"\u03A8", ttype:CONST},
 	{input:"\\Omega",	tag:"mo", output:"\u03A9", ttype:CONST},
 	
-	//fractions
+	// fractions
 	{input:"\\frac12",	tag:"mo", output:"\u00BD", ttype:CONST},
 	{input:"\\frac14",	tag:"mo", output:"\u00BC", ttype:CONST},
 	{input:"\\frac34",	tag:"mo", output:"\u00BE", ttype:CONST},
@@ -1121,7 +1120,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\frac58",	tag:"mo", output:"\u215D", ttype:CONST},
 	{input:"\\frac78",	tag:"mo", output:"\u215E", ttype:CONST},
 	
-	//binary operation symbols
+	// binary operation symbols
 	{input:"\\pm",		tag:"mo", output:"\u00B1", ttype:CONST},
 	{input:"\\mp",		tag:"mo", output:"\u2213", ttype:CONST},
 	{input:"\\triangleleft",tag:"mo", output:"\u22B2", ttype:CONST},
@@ -1132,7 +1131,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\times",	tag:"mo", output:"\u00D7", ttype:CONST},
 	{input:"\\div",		tag:"mo", output:"\u00F7", ttype:CONST},
 	{input:"\\circ",	tag:"mo", output:"\u2218", ttype:CONST},
-	//{input:"\\bullet",	  tag:"mo", output:"\u2219", ttype:CONST},
+	// {input:"\\bullet", tag:"mo", output:"\u2219", ttype:CONST},
 	{input:"\\bullet",	tag:"mo", output:"\u2022", ttype:CONST},
 	{input:"\\oplus",	tag:"mo", output:"\u2295", ttype:CONST},
 	{input:"\\ominus",	tag:"mo", output:"\u2296", ttype:CONST},
@@ -1162,7 +1161,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\unrhd",	tag:"mo", output:"\u22B5", ttype:CONST},
 	
 	
-	//BIG Operators
+	// BIG Operators
 	{input:"\\sum",		tag:"mo", output:"\u2211", ttype:UNDEROVER},
 	{input:"\\prod",	tag:"mo", output:"\u220F", ttype:UNDEROVER},
 	{input:"\\bigcap",	tag:"mo", output:"\u22C2", ttype:UNDEROVER},
@@ -1179,7 +1178,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\int",		tag:"mo", output:"\u222B", ttype:CONST},
 	{input:"\\oint",	tag:"mo", output:"\u222E", ttype:CONST},
 	
-	//binary relation symbols
+	// binary relation symbols
 	{input:":=",		tag:"mo", output:":=",	   ttype:CONST},
 	{input:"\\lt",		tag:"mo", output:"<",	   ttype:CONST},
 	{input:"\\gt",		tag:"mo", output:">",	   ttype:CONST},
@@ -1226,14 +1225,14 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\asymp",	tag:"mo", output:"\u224D", ttype:CONST},
 	{input:"\\notin",	tag:"mo", output:"\u2209", ttype:CONST},
 	
-	//matrices
+	// matrices
 	{input:"\\begin{eqnarray}",	output:"X",	ttype:MATRIX, invisible:true},
 	{input:"\\begin{array}",	output:"X",	ttype:MATRIX, invisible:true},
 	{input:"\\\\",			output:"}&{",	ttype:DEFINITION},
 	{input:"\\end{eqnarray}",	output:"}}",	ttype:DEFINITION},
 	{input:"\\end{array}",		output:"}}",	ttype:DEFINITION},
 	
-	//grouping and literal brackets -- ieval is for IE
+	// grouping and literal brackets -- ieval is for IE
 	{input:"\\big",	   tag:"mo", output:"X", atval:"1.2", ieval:"2.2", ttype:BIG},
 	{input:"\\Big",	   tag:"mo", output:"X", atval:"1.6", ieval:"2.6", ttype:BIG},
 	{input:"\\bigg",   tag:"mo", output:"X", atval:"2.2", ieval:"3.2", ttype:BIG},
@@ -1274,7 +1273,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\backslash",	tag:"mo", output:"\u2216", atval:"1", ttype:STRETCHY},
 	{input:"\\setminus",	tag:"mo", output:"\\",	   ttype:CONST},
 	
-	//miscellaneous symbols
+	// miscellaneous symbols
 	{input:"\\!",	  tag:"mspace", atname:"width", atval:"-0.167em", ttype:SPACE},
 	{input:"\\,",	  tag:"mspace", atname:"width", atval:"0.167em", ttype:SPACE},
 	{input:"\\>",	  tag:"mspace", atname:"width", atval:"0.222em", ttype:SPACE},
@@ -1283,7 +1282,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"~",	  tag:"mspace", atname:"width", atval:"0.333em", ttype:SPACE},
 	{input:"\\quad",  tag:"mspace", atname:"width", atval:"1em", ttype:SPACE},
 	{input:"\\qquad", tag:"mspace", atname:"width", atval:"2em", ttype:SPACE},
-	//{input:"{}",		  tag:"mo", output:"\u200B", ttype:CONST}, // zero-width
+	// {input:"{}", tag:"mo", output:"\u200B", ttype:CONST}, // zero-width
 	{input:"\\prime",	tag:"mo", output:"\u2032", ttype:CONST},
 	{input:"'",		tag:"mo", output:"\u02B9", ttype:CONST},
 	{input:"''",		tag:"mo", output:"\u02BA", ttype:CONST},
@@ -1309,9 +1308,9 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\triangle",	tag:"mo", output:"\u25B3", ttype:CONST},
 	{input:"\\therefore",	tag:"mo", output:"\u2234", ttype:CONST},
 	{input:"\\angle",	tag:"mo", output:"\u2220", ttype:CONST},
-	//{input:"\\\\ ",	  tag:"mo", output:"\u00A0", ttype:CONST},
+	// {input:"\\\\ ", tag:"mo", output:"\u00A0", ttype:CONST},
 	{input:"\\diamond",	tag:"mo", output:"\u22C4", ttype:CONST},
-	//{input:"\\Diamond",	  tag:"mo", output:"\u25CA", ttype:CONST},
+	// {input:"\\Diamond", tag:"mo", output:"\u25CA", ttype:CONST},
 	{input:"\\Diamond",	tag:"mo", output:"\u25C7", ttype:CONST},
 	{input:"\\neg",		tag:"mo", output:"\u00AC", ttype:CONST},
 	{input:"\\lnot",	tag:"mo", output:"\u00AC", ttype:CONST},
@@ -1321,8 +1320,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\Box",		tag:"mo", output:"\u25A1", ttype:CONST},
 	{input:"\\wr",		tag:"mo", output:"\u2240", ttype:CONST},
 	
-	//standard functions
-	//Note UNDEROVER *must* have tag:"mo" to work properly
+	// standard functions
+	// Note UNDEROVER *must* have tag:"mo" to work properly
 	{input:"\\arccos", tag:"mi", output:"arccos", ttype:UNARY, func:true},
 	{input:"\\arcsin", tag:"mi", output:"arcsin", ttype:UNARY, func:true},
 	{input:"\\arctan", tag:"mi", output:"arctan", ttype:UNARY, func:true},
@@ -1334,9 +1333,9 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\csc",	   tag:"mi", output:"csc",    ttype:UNARY, func:true},
 	{input:"\\deg",	   tag:"mi", output:"deg",    ttype:UNARY, func:true},
 	{input:"\\det",	   tag:"mi", output:"det",    ttype:UNARY, func:true},
-	{input:"\\dim",	   tag:"mi", output:"dim",    ttype:UNARY, func:true}, //CONST?
+	{input:"\\dim",	   tag:"mi", output:"dim",    ttype:UNARY, func:true}, // CONST?
 	{input:"\\exp",	   tag:"mi", output:"exp",    ttype:UNARY, func:true},
-	{input:"\\gcd",	   tag:"mi", output:"gcd",    ttype:UNARY, func:true}, //CONST?
+	{input:"\\gcd",	   tag:"mi", output:"gcd",    ttype:UNARY, func:true}, // CONST?
 	{input:"\\hom",	   tag:"mi", output:"hom",    ttype:UNARY, func:true},
 	{input:"\\inf",	      tag:"mo", output:"inf",	 ttype:UNDEROVER},
 	{input:"\\ker",	   tag:"mi", output:"ker",    ttype:UNARY, func:true},
@@ -1356,7 +1355,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\tan",	   tag:"mi", output:"tan",    ttype:UNARY, func:true},
 	{input:"\\tanh",   tag:"mi", output:"tanh",   ttype:UNARY, func:true},
 	
-	//arrows
+	// arrows
 	{input:"\\gets",		tag:"mo", output:"\u2190", ttype:CONST},
 	{input:"\\leftarrow",		tag:"mo", output:"\u2190", ttype:CONST},
 	{input:"\\to",			tag:"mo", output:"\u2192", ttype:CONST},
@@ -1383,7 +1382,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\longmapsto",		tag:"mo", output:"\u21A6", ttype:CONST},
 								// disaster if LONG
 	
-	//commands with argument
+	// commands with argument
 	
 	{input:"\\sqrt",	tag:"msqrt", output:"sqrt",	ttype:UNARY},
 	{input:"\\root",	tag:"mroot", output:"root",	ttype:BINARY},
@@ -1396,18 +1395,18 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\mathrm",	tag:"mtext", output:"text",	ttype:TEXT},
 	{input:"\\mbox",	tag:"mtext", output:"mbox",	ttype:TEXT},
 	
-	//diacritical marks
+	// diacritical marks
 	{input:"\\acute",	tag:"mover",  output:"\u00B4", ttype:UNARY, acc:true},
-	//{input:"\\acute",	  tag:"mover",  output:"\u0317", ttype:UNARY, acc:true},
-	//{input:"\\acute",	  tag:"mover",  output:"\u0301", ttype:UNARY, acc:true},
-	//{input:"\\grave",	  tag:"mover",  output:"\u0300", ttype:UNARY, acc:true},
-	//{input:"\\grave",	  tag:"mover",  output:"\u0316", ttype:UNARY, acc:true},
+	// {input:"\\acute", tag:"mover", output:"\u0317", ttype:UNARY, acc:true},
+	// {input:"\\acute", tag:"mover", output:"\u0301", ttype:UNARY, acc:true},
+	// {input:"\\grave", tag:"mover", output:"\u0300", ttype:UNARY, acc:true},
+	// {input:"\\grave", tag:"mover", output:"\u0316", ttype:UNARY, acc:true},
 	{input:"\\grave",	tag:"mover",  output:"\u0060", ttype:UNARY, acc:true},
 	{input:"\\breve",	tag:"mover",  output:"\u02D8", ttype:UNARY, acc:true},
 	{input:"\\check",	tag:"mover",  output:"\u02C7", ttype:UNARY, acc:true},
 	{input:"\\dot",		tag:"mover",  output:".",      ttype:UNARY, acc:true},
 	{input:"\\ddot",	tag:"mover",  output:"..",     ttype:UNARY, acc:true},
-	//{input:"\\ddot",	  tag:"mover",  output:"\u00A8", ttype:UNARY, acc:true},
+	// {input:"\\ddot", tag:"mover", output:"\u00A8", ttype:UNARY, acc:true},
 	{input:"\\mathring",	tag:"mover",  output:"\u00B0", ttype:UNARY, acc:true},
 	{input:"\\vec",		tag:"mover",  output:"\u20D7", ttype:UNARY, acc:true},
 	{input:"\\overrightarrow",tag:"mover",output:"\u20D7", ttype:UNARY, acc:true},
@@ -1415,16 +1414,17 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\hat",		tag:"mover",  output:"\u005E", ttype:UNARY, acc:true},
 	{input:"\\widehat",	tag:"mover",  output:"\u0302", ttype:UNARY, acc:true},
 	{input:"\\tilde",	tag:"mover",  output:"~",      ttype:UNARY, acc:true},
-	//{input:"\\tilde",	  tag:"mover",  output:"\u0303", ttype:UNARY, acc:true},
+	// {input:"\\tilde", tag:"mover", output:"\u0303", ttype:UNARY, acc:true},
 	{input:"\\widetilde",	tag:"mover",  output:"\u02DC", ttype:UNARY, acc:true},
 	{input:"\\bar",		tag:"mover",  output:"\u203E", ttype:UNARY, acc:true},
 	{input:"\\overbrace",	tag:"mover",  output:"\u23B4", ttype:UNARY, acc:true},
 	{input:"\\overline",	tag:"mover",  output:"\u00AF", ttype:UNARY, acc:true},
 	{input:"\\underbrace",  tag:"munder", output:"\u23B5", ttype:UNARY, acc:true},
 	{input:"\\underline",	tag:"munder", output:"\u00AF", ttype:UNARY, acc:true},
-	//{input:"underline",	tag:"munder", output:"\u0332", ttype:UNARY, acc:true},
+	// {input:"underline", tag:"munder", output:"\u0332", ttype:UNARY,
+	// acc:true},
 	
-	//typestyles and fonts
+	// typestyles and fonts
 	{input:"\\displaystyle",tag:"mstyle",atname:"displaystyle",atval:"true", ttype:UNARY},
 	{input:"\\textstyle",tag:"mstyle",atname:"displaystyle",atval:"false", ttype:UNARY},
 	{input:"\\scriptstyle",tag:"mstyle",atname:"scriptlevel",atval:"1", ttype:UNARY},
@@ -1442,10 +1442,10 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	{input:"\\mathfrak",tag:"mstyle",atname:"mathvariant", atval:"fraktur",ttype:UNARY, codes:AMfrk}
 	];
 	
-	var LMnames = []; //list of input symbols
+	var LMnames = []; // list of input symbols
 	
 	function LMremoveCharsAndBlanks(str,n) {
-	//remove n characters and any following blanks
+	// remove n characters and any following blanks
 	  var st;
 	  st = str.slice(n);
 	  for (var i=0; i<st.length && st.charCodeAt(i)<=32; i=i+1);
@@ -1453,17 +1453,17 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	}
 	
 	function LMgetSymbol(str) {
-	//return maximal initial substring of str that appears in names
-	//return null if there is none
-	  var k = 0; //new pos
-	  var j = 0; //old pos
-	  var mk; //match pos
+	// return maximal initial substring of str that appears in names
+	// return null if there is none
+	  var k = 0; // new pos
+	  var j = 0; // old pos
+	  var mk; // match pos
 	  var st;
 	  var tagst;
 	  var match = "";
 	  var more = true;
 	  for (var i=1; i<=str.length && more; i++) {
-	    st = str.slice(0,i); //initial substring of length i
+	    st = str.slice(0,i); // initial substring of length i
 	    j = k;
 	    k = position(LMnames, st, j);
 	    if (k<LMnames.length && str.slice(0,LMnames[k].length)==LMnames[k]){
@@ -1480,40 +1480,39 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  }
 	  LMcurrentSymbol=CONST;
 	  k = 1;
-	  st = str.slice(0,1); //take 1 character
+	  st = str.slice(0,1); // take 1 character
 	  if ("0"<=st && st<="9") tagst = "mn";
 	  else tagst = (("A">st || st>"Z") && ("a">st || st>"z")?"mo":"mi");
 	/*
-	// Commented out by DRW (not fully understood, but probably to do with
-	// use of "/" as an INFIX version of "\\frac", which we don't want):
-	//}
-	//if (st=="-" && LMpreviousSymbol==INFIX) {
-	//  LMcurrentSymbol = INFIX;  //trick "/" into recognizing "-" on second parse
-	//  return {input:st, tag:tagst, output:st, ttype:UNARY, func:true};
-	//}
-	*/
+	 * // Commented out by DRW (not fully understood, but probably to do with //
+	 * use of "/" as an INFIX version of "\\frac", which we don't want): //}
+	 * //if (st=="-" && LMpreviousSymbol==INFIX) { // LMcurrentSymbol = INFIX;
+	 * //trick "/" into recognizing "-" on second parse // return {input:st,
+	 * tag:tagst, output:st, ttype:UNARY, func:true}; //}
+	 */
 	  return {input:st, tag:tagst, output:st, ttype:CONST};
 	}
 	
 	
-	/*Parsing ASCII math expressions with the following grammar
-	v ::= [A-Za-z] | greek letters | numbers | other constant symbols
-	u ::= sqrt | text | bb | other unary symbols for font commands
-	b ::= frac | root | stackrel	binary symbols
-	l ::= { | \left			left brackets
-	r ::= } | \right		right brackets
-	S ::= v | lEr | uS | bSS	Simple expression
-	I ::= S_S | S^S | S_S^S | S	Intermediate expression
-	E ::= IE | I/I			Expression
-	Each terminal symbol is translated into a corresponding mathml node.*/
+	/*
+	 * Parsing ASCII math expressions with the following grammar v ::= [A-Za-z] |
+	 * greek letters | numbers | other constant symbols u ::= sqrt | text | bb |
+	 * other unary symbols for font commands b ::= frac | root | stackrel binary
+	 * symbols l ::= { | \left left brackets r ::= } | \right right brackets S
+	 * ::= v | lEr | uS | bSS Simple expression I ::= S_S | S^S | S_S^S | S
+	 * Intermediate expression E ::= IE | I/I Expression Each terminal symbol is
+	 * translated into a corresponding mathml node.
+	 */
 	
 	var LMpreviousSymbol,LMcurrentSymbol;
 	
-	function LMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
+	function LMparseSexpr(str) { // parses str and returns
+									// [node,tailstr,(node)tag]
 	  var symbol, node, result, result2, i, st,// rightvert = false,
 	    newFrag = document.createDocumentFragment();
 	  str = LMremoveCharsAndBlanks(str,0);
-	  symbol = LMgetSymbol(str);             //either a token or a bracket or empty
+	  symbol = LMgetSymbol(str);             // either a token or a bracket
+												// or empty
 	  if (symbol == null || symbol.ttype == RIGHTBRACKET)
 	    return [null,str,null];
 	  if (symbol.ttype == DEFINITION) {
@@ -1529,38 +1528,10 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    node.setAttribute(symbol.atname,symbol.atval);
 	    return [node,str,symbol.tag];
 	  case UNDEROVER:
-	    if (isIE) {
-	      if (symbol.input.substr(0,4) == "\\big") {   // botch for missing symbols
-		str = "\\"+symbol.input.substr(4)+str;	   // make \bigcup = \cup etc.
-		symbol = LMgetSymbol(str);
-		symbol.ttype = UNDEROVER;
-		str = LMremoveCharsAndBlanks(str,symbol.input.length);
-	      }
-	    }
 	    return [createMmlNode(symbol.tag,
 				document.createTextNode(symbol.output)),str,symbol.tag];
 	  case CONST:
 	    var output = symbol.output;
-	    if (isIE) {
-	      if (symbol.input == "'")
-		output = "\u2032";
-	      else if (symbol.input == "''")
-		output = "\u2033";
-	      else if (symbol.input == "'''")
-		output = "\u2033\u2032";
-	      else if (symbol.input == "''''")
-		output = "\u2033\u2033";
-	      else if (symbol.input == "\\square")
-		output = "\u25A1";	// same as \Box
-	      else if (symbol.input.substr(0,5) == "\\frac") {
-							// botch for missing fractions
-		var denom = symbol.input.substr(6,1);
-		if (denom == "5" || denom == "6") {
-		  str = symbol.input.replace(/\\frac/,"\\frac ")+str;
-		  return [node,str,symbol.tag];
-		}
-	      }
-	    }
 	    node = createMmlNode(symbol.tag,document.createTextNode(output));
 	    return [node,str,symbol.tag];
 	  case LONG:  // added by DRW
@@ -1571,39 +1542,29 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    node.appendChild(createMmlNode("mspace"));
 	    return [node,str,symbol.tag];
 	  case STRETCHY:  // added by DRW
-	    if (isIE && symbol.input == "\\backslash")
-		symbol.output = "\\";	// doesn't expand, but then nor does "\u2216"
 	    node = createMmlNode(symbol.tag,document.createTextNode(symbol.output));
 	    if (symbol.input == "|" || symbol.input == "\\vert" ||
 		symbol.input == "\\|" || symbol.input == "\\Vert") {
 		  node.setAttribute("lspace","0em");
 		  node.setAttribute("rspace","0em");
 	    }
-	    node.setAttribute("maxsize",symbol.atval);  // don't allow to stretch here
+	    node.setAttribute("maxsize",symbol.atval);  // don't allow to stretch
+													// here
 	    if (symbol.rtag != null)
 	      return [node,str,symbol.rtag];
 	    else
 	      return [node,str,symbol.tag];
 	  case BIG:  // added by DRW
 	    var atval = symbol.atval;
-	    if (isIE)
-	      atval = symbol.ieval;
 	    symbol = LMgetSymbol(str);
 	    if (symbol == null)
 		return [null,str,null];
 	    str = LMremoveCharsAndBlanks(str,symbol.input.length);
 	    node = createMmlNode(symbol.tag,document.createTextNode(symbol.output));
-	    if (isIE) {		// to get brackets to expand
-	      var space = createMmlNode("mspace");
-	      space.setAttribute("height",atval+"ex");
-	      node = createMmlNode("mrow",node);
-	      node.appendChild(space);
-	    } else {		// ignored in IE
-	      node.setAttribute("minsize",atval);
-	      node.setAttribute("maxsize",atval);
-	    }
+	    node.setAttribute("minsize",atval);
+	    node.setAttribute("maxsize",atval);
 	    return [node,str,symbol.tag];
-	  case LEFTBRACKET:   //read (expr+)
+	  case LEFTBRACKET:   // read (expr+)
 	    if (symbol.input == "\\left") { // left what?
 	      symbol = LMgetSymbol(str);
 	      if (symbol != null) {
@@ -1622,7 +1583,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      node.appendChild(result[0]);
 	    }
 	    return [node,result[1],result[2]];
-	  case MATRIX:	 //read (expr+)
+	  case MATRIX:	 // read (expr+)
 	    if (symbol.input == "\\begin{array}") {
 	      var mask = "";
 	      symbol = LMgetSymbol(str);
@@ -1643,16 +1604,14 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 		} while (symbol != null && symbol.input != "" && symbol.input != "}");
 	      }
 	      result = LMparseExpr("{"+str,true,true);
-	//    if (result[0]==null) return [createMmlNode("mo",
-	//			   document.createTextNode(symbol.input)),str];
+	// if (result[0]==null) return [createMmlNode("mo",
+	// document.createTextNode(symbol.input)),str];
 	      node = createMmlNode("mtable",result[0]);
 	      mask = mask.replace(/l/g,"left ");
 	      mask = mask.replace(/r/g,"right ");
 	      mask = mask.replace(/c/g,"center ");
 	      node.setAttribute("columnalign",mask);
 	      node.setAttribute("displaystyle","false");
-	      if (isIE)
-		return [node,result[1],null];
 	// trying to get a *little* bit of space around the array
 	// (IE already includes it)
 	      var lspace = createMmlNode("mspace");
@@ -1666,10 +1625,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    } else {	// eqnarray
 	      result = LMparseExpr("{"+str,true,true);
 	      node = createMmlNode("mtable",result[0]);
-	      if (isIE)
-		node.setAttribute("columnspacing","0.25em"); // best in practice?
-	      else
-		node.setAttribute("columnspacing","0.167em"); // correct (but ignored?)
+		  node.setAttribute("columnspacing","0.167em"); // correct (but
+														// ignored?)
 	      node.setAttribute("columnalign","right center left");
 	      node.setAttribute("displaystyle","true");
 	      node = createMmlNode("mrow",node);
@@ -1699,58 +1656,30 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      result = LMparseSexpr(str);
 	      if (result[0]==null) return [createMmlNode(symbol.tag,
 	                             document.createTextNode(symbol.output)),str];
-	      if (typeof symbol.func == "boolean" && symbol.func) { // functions hack
+	      if (typeof symbol.func == "boolean" && symbol.func) { // functions
+																// hack
 		st = str.charAt(0);
-	//	if (st=="^" || st=="_" || st=="/" || st=="|" || st==",") {
+	// if (st=="^" || st=="_" || st=="/" || st=="|" || st==",") {
 		if (st=="^" || st=="_" || st==",") {
 		  return [createMmlNode(symbol.tag,
 			    document.createTextNode(symbol.output)),str,symbol.tag];
 	        } else {
 		  node = createMmlNode("mrow",
 		   createMmlNode(symbol.tag,document.createTextNode(symbol.output)));
-		  if (isIE) {
-		    var space = createMmlNode("mspace");
-		    space.setAttribute("width","0.167em");
-		    node.appendChild(space);
-		  }
 		  node.appendChild(result[0]);
 		  return [node,result[1],symbol.tag];
 	        }
 	      }
 	      if (symbol.input == "\\sqrt") {		// sqrt
-		if (isIE) {	// set minsize, for \surd
-		  var space = createMmlNode("mspace");
-		  space.setAttribute("height","1.2ex");
-		  space.setAttribute("width","0em");	// probably no effect
-		  node = createMmlNode(symbol.tag,result[0])
-	//	  node.setAttribute("minsize","1");	// ignored
-	//	  node = createMmlNode("mrow",node);  // hopefully unnecessary
-		  node.appendChild(space);
-		  return [node,result[1],symbol.tag];
-		} else
 		  return [createMmlNode(symbol.tag,result[0]),result[1],symbol.tag];
 	      } else if (typeof symbol.acc == "boolean" && symbol.acc) {   // accent
 	        node = createMmlNode(symbol.tag,result[0]);
 		var output = symbol.output;
-		if (isIE) {
-			if (symbol.input == "\\hat")
-				output = "\u0302";
-			else if (symbol.input == "\\widehat")
-				output = "\u005E";
-			else if (symbol.input == "\\bar")
-				output = "\u00AF";
-			else if (symbol.input == "\\grave")
-				output = "\u0300";
-			else if (symbol.input == "\\tilde")
-				output = "\u0303";
-		}
 		var node1 = createMmlNode("mo",document.createTextNode(output));
 		if (symbol.input == "\\vec" || symbol.input == "\\check")
 							// don't allow to stretch
 		    node1.setAttribute("maxsize","1.2");
-			 // why doesn't "1" work?  \vec nearly disappears in firefox
-		if (isIE && symbol.input == "\\bar")
-		    node1.setAttribute("maxsize","0.5");
+			 // why doesn't "1" work? \vec nearly disappears in firefox
 		if (symbol.input == "\\underbrace" || symbol.input == "\\underline")
 		  node1.setAttribute("accentunder","true");
 		else
@@ -1760,7 +1689,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 		  node.ttype = UNDEROVER;
 		return [node,result[1],symbol.tag];
 	      } else {			      // font change or displaystyle command
-	        if (!isIE && typeof symbol.codes != "undefined") {
+	        if (typeof symbol.codes != "undefined") {
 	          for (i=0; i<result[0].childNodes.length; i++)
 	            if (result[0].childNodes[i].nodeName=="mi" || result[0].nodeName=="mi") {
 	              st = (result[0].nodeName=="mi"?result[0].firstChild.nodeValue:
@@ -1801,7 +1730,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    return [createMmlNode("mo",document.createTextNode(symbol.output)),
 		str,symbol.tag];
 	  default:
-	    return [createMmlNode(symbol.tag,        //its a constant
+	    return [createMmlNode(symbol.tag,        // its a constant
 		document.createTextNode(symbol.output)),str,symbol.tag];
 	  }
 	}
@@ -1827,7 +1756,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      tag = null;	// no space between x^2 and a following sin, cos, etc.
 	// This is for \underbrace and \overbrace
 	      underover = ((sym1.ttype == UNDEROVER) || (node.ttype == UNDEROVER));
-	//    underover = (sym1.ttype == UNDEROVER);
+	// underover = (sym1.ttype == UNDEROVER);
 	      if (symbol.input == "_" && sym2.input == "^") {
 	        str = LMremoveCharsAndBlanks(str,sym2.input.length);
 	        var res2 = LMparseSexpr(str);
@@ -1890,12 +1819,13 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 		tag = symbol.rtag;
 	    }
 	    if (symbol!=null)
-	      str = LMremoveCharsAndBlanks(str,symbol.input.length); // ready to return
+	      str = LMremoveCharsAndBlanks(str,symbol.input.length); // ready to
+																	// return
 	    var len = newFrag.childNodes.length;
 	    if (matrix &&
 	      len>0 && newFrag.childNodes[len-1].nodeName == "mrow" && len>1 &&
 	      newFrag.childNodes[len-2].nodeName == "mo" &&
-	      newFrag.childNodes[len-2].firstChild.nodeValue == "&") { //matrix
+	      newFrag.childNodes[len-2].firstChild.nodeValue == "&") { // matrix
 		var pos = []; // positions of ampersands
 	        var m = newFrag.childNodes.length;
 	        for (i=0; matrix && i<m; i=i+2) {
@@ -1914,15 +1844,15 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 		  k = 0;
 		  for (j=0; j<n; j++) {
 		    if (typeof pos[i][k] != "undefined" && j==pos[i][k]){
-		      node.removeChild(node.firstChild); //remove &
+		      node.removeChild(node.firstChild); // remove &
 		      row.appendChild(createMmlNode("mtd",frag));
 		      k++;
 		    } else frag.appendChild(node.firstChild);
 		  }
 		  row.appendChild(createMmlNode("mtd",frag));
 		  if (newFrag.childNodes.length>2) {
-		    newFrag.removeChild(newFrag.firstChild); //remove <mrow> </mrow>
-		    newFrag.removeChild(newFrag.firstChild); //remove <mo>&</mo>
+		    newFrag.removeChild(newFrag.firstChild); // remove <mrow> </mrow>
+		    newFrag.removeChild(newFrag.firstChild); // remove <mo>&</mo>
 		  }
 		  table.appendChild(createMmlNode("mtr",row));
 		}
@@ -1936,7 +1866,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  return [newFrag,str,tag];
 	}
 	
-	var tcnt = 0, dcnt = 0; //theorem and definition counters
+	var tcnt = 0, dcnt = 0; // theorem and definition counters
 	
 	function simpleLaTeXformatting(st) {
 	  st = st.replace(/\$\$((.|\n)*?)\$\$/g,"<p align=\"center\">$\\displaystyle{$1}$</p>");
@@ -1969,7 +1899,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	
 	function ASCIIandgraphformatting(st) {
 	  st = st.replace(/<sup>(.*?)<\/sup>(\s|(\S))/gi,"^{$1} $3");
-	//st = st.replace(/<\/?font.*?>/gi,""); // do this only in amath...endamath
+	// st = st.replace(/<\/?font.*?>/gi,""); // do this only in amath...endamath
 	  st = st.replace(/(Proof:)/g,"<i>$1</i>");
 	  st = st.replace(/QED/g,"&nbsp; &nbsp; &#x25A1;");
 	  st = st.replace(/(\\?end{?a?math}?)/ig,"<span></span>$1");
@@ -1978,7 +1908,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  st = st.replace(/<embed\s+class\s?=\s?"?ASCIIsvg"?/gi,"<embed class=\"ASCIIsvg\" src=\""+dsvglocation+"d.svg\" wmode=\"transparent\"");
 	  st = st.replace(/(?:\\begin{a?graph}|\bagraph|\(:graph\s)((.|\n)*?)(?:\\end{a?graph}|enda?graph|:\))/g,function(s,t){return "<table><tr><td><div class=\"ASCIIsvg\"><embed class=\"ASCIIsvg\" src=\""+dsvglocation+"d.svg\" wmode=\"transparent\" script=\'"+t.replace(/<\/?(br|p|pre)\s?\/?>/gi,"\n")+"\'/></div></td></tr></table>"});
 	  st = st.replace(/insertASCIIMathCalculator/g,"<div class=\"ASCIIMathCalculator\"></div>");
-	//alert(dsvglocation)
+	// alert(dsvglocation)
 	  return st
 	}
 	
@@ -1997,38 +1927,40 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      st = ASCIIandgraphformatting(st);
 	    }
 	    st = st.replace(/%7E/g,"~"); // else PmWiki has url issues
-	//alert(st)
+	// alert(st)
 	    if (!avoidinnerHTML) n.innerHTML = st;
 	    processNodeR(n,false,true);
 	  }
-	/*  if (isIE) { //needed to match size and font of formula to surrounding text
-	    frag = document.getElementsByTagName('math');
-	    for (var i=0;i<frag.length;i++) frag[i].update() //is this really needed?
-	  }*/
+	/*
+	 * if (isIE) { //needed to match size and font of formula to surrounding
+	 * text frag = document.getElementsByTagName('math'); for (var i=0;i<frag.length;i++)
+	 * frag[i].update() //is this really needed? }
+	 */
 	}
 	
-	/* ASCIIsvg.js
-	==============
-	JavaScript routines to dynamically generate Scalable Vector Graphics
-	using a mathematical xy-coordinate system (y increases upwards) and
-	very intuitive JavaScript commands (no programming experience required).
-	ASCIIsvg.js is good for learning math and illustrating online math texts.
-	Works with Internet Explorer+Adobe SVGviewer and SVG enabled Mozilla/Firefox.
-	
-	Ver 1.2.9 July 31, 2007 (c) Peter Jipsen http://www.chapman.edu/~jipsen
-	Latest version at http://math.chapman.edu/~jipsen/math/pub/ASCIIsvg.js
-	If you use it on a webpage, please send the URL to jipsen@chapman.edu
-	
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU Lesser General Public License as published by
-	the Free Software Foundation; either version 2.1 of the License, or (at
-	your option) any later version.
-	
-	This program is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
-	General Public License (at http://www.gnu.org/license/lgpl.html) 
-	for more details.*/
+	/*
+	 * ASCIIsvg.js ============== JavaScript routines to dynamically generate
+	 * Scalable Vector Graphics using a mathematical xy-coordinate system (y
+	 * increases upwards) and very intuitive JavaScript commands (no programming
+	 * experience required). ASCIIsvg.js is good for learning math and
+	 * illustrating online math texts. Works with Internet Explorer+Adobe
+	 * SVGviewer and SVG enabled Mozilla/Firefox.
+	 * 
+	 * Ver 1.2.9 July 31, 2007 (c) Peter Jipsen http://www.chapman.edu/~jipsen
+	 * Latest version at http://math.chapman.edu/~jipsen/math/pub/ASCIIsvg.js If
+	 * you use it on a webpage, please send the URL to jipsen@chapman.edu
+	 * 
+	 * This program is free software; you can redistribute it and/or modify it
+	 * under the terms of the GNU Lesser General Public License as published by
+	 * the Free Software Foundation; either version 2.1 of the License, or (at
+	 * your option) any later version.
+	 * 
+	 * This program is distributed in the hope that it will be useful, but
+	 * WITHOUT ANY WARRANTY; without even the implied warranty of
+	 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+	 * General Public License (at http://www.gnu.org/license/lgpl.html) for more
+	 * details.
+	 */
 	
 	// you can change these
 	var checkIfSVGavailable = true;
@@ -2046,8 +1978,10 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	var defaultstrokedasharray = null; // "10,10" gives 10px long dashes
 	var defaultfill = "none";        // default fill color
 	var defaultfillopacity = 1;      // transparent = 0, solid =1
-	var defaultfontstyle = "normal"; // default text shape normal|italic|inherit
-	var defaultfontfamily = "times"; // default font times|ariel|helvetica|...
+	var defaultfontstyle = "normal"; // default text shape
+										// normal|italic|inherit
+	var defaultfontfamily = "times"; // default font
+										// times|ariel|helvetica|...
 	var defaultfontsize = "16";      // default size (scaled automatically)
 	var defaultfontweight = "normal";// normal|bold|bolder|lighter|100|...|900
 	var defaultfontstroke = "none";  // default font outline color
@@ -2088,7 +2022,6 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	var fontstyle, fontfamily, fontsize, fontweight, fontstroke, fontfill;
 	var marker, endpoints, dynamic = {};
 	var picture, svgpicture, doc, width, height;
-	var isIE = document.createElementNS==null;
 	
 	var cpi = "\u03C0", ctheta = "\u03B8";      // character for pi, theta
 	var log = function(x) { return ln(x)/ln(10) };
@@ -2135,19 +2068,20 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  return res;
 	}
 	
-	function chop(x,n) { // Truncate decimal number to n places after decimal point
+	function chop(x,n) { // Truncate decimal number to n places after decimal
+							// point
 	  if (n==null) n=0;
 	  return Math.floor(x*Math.pow(10,n))/Math.pow(10,n);
 	}
 	
-	function ran(a,b,n) { // Generate random number in [a,b] with n digits after .
+	function ran(a,b,n) { // Generate random number in [a,b] with n digits
+							// after .
 	  if (n==null) n=0;
 	  return chop((b+Math.pow(10,-n)-a)*Math.random()+a,n);
 	}
 	
 	function myCreateElementSVG(t) {
-	  if (isIE) return doc.createElement(t);
-	  else return doc.createElementNS("http://www.w3.org/2000/svg",t);
+	  return doc.createElement(t);
 	}
 	
 	function getElementsByClass(container, tagName, clsName){
@@ -2174,7 +2108,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    while (obj = obj.offsetParent) {
 	      curleft += obj.offsetLeft
 	      curtop += obj.offsetTop
-	//alert(showobj(obj)+[curleft,curtop])
+	// alert(showobj(obj)+[curleft,curtop])
 	    }
 	  }
 	  return [curleft,curtop];
@@ -2194,7 +2128,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  else if (navigator.appName.slice(0,5)=="Opera") // works only for 9.50b1
 	    noSVG = null;
 	  else noSVG = true;
-	//noSVG = true; //uncomment to check
+	// noSVG = true; //uncomment to check
 	  if (noSVG && notifyIfNoSVG) {
 	    var msg = "To view the ASCIIsvg images use Internet Explorer + Adobe SVGviewer or Mozilla Firefox 2.0 or later."
 	    if (alertIfNoSVG)
@@ -2213,25 +2147,26 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	function getX(evt) { // return mouse x-coord in user coordinate system
 	  var svgroot = evt.target.parentNode;
 	    pos = findPos(svgroot.parentNode);
-	  return (evt.clientX+(isIE?0:window.pageXOffset)-pos[0]-svgroot.getAttribute("ox"))/parseFloat(svgroot.getAttribute("xunitlength"));
+	  return (evt.clientX+(window.pageXOffset)-pos[0]-svgroot.getAttribute("ox"))/parseFloat(svgroot.getAttribute("xunitlength"));
 	}
 	
 	function getY(evt) { // return mouse y-coord in user coordinate system
 	  var svgroot = evt.target.parentNode;
 	    pos = findPos(svgroot.parentNode);
-	//alert(showobj(svgroot)+svgroot.getAttribute("mytop"))
-	  return (svgroot.getAttribute("height")-svgroot.getAttribute("oy")-(evt.clientY+(isIE?0:window.pageYOffset)-pos[1]))/parseFloat(svgroot.getAttribute("yunitlength"));
+	// alert(showobj(svgroot)+svgroot.getAttribute("mytop"))
+	  return (svgroot.getAttribute("height")-svgroot.getAttribute("oy")-(evt.clientY+(window.pageYOffset)-pos[1]))/parseFloat(svgroot.getAttribute("yunitlength"));
 	}
 	
-	function translateandeval(src) { //modify user input to JavaScript syntax
+	function translateandeval(src) { // modify user input to JavaScript
+										// syntax
 	  var errstr;
-	  // replace plot(f(x),...) with plot("f(x)",...)  
+	  // replace plot(f(x),...) with plot("f(x)",...)
 	  src = src.replace(/plot\(\x20*([^\"f\[][^\n\r;]+?)\,/g,"plot\(\"$1\",");
 	  src = src.replace(/plot\(\x20*([^\"f\[][^\n\r;]+)\)/g,"plot(\"$1\")");
 	
 	  // replace (expr,expr) by [expr,expr] where expr has no (,) in it
 	  src = src.replace(/([=[(,]\x20*)\(([-a-z0-9./+*]+?),([-a-z0-9./+*]+?)\)/g,"$1[$2,$3]");
-	//alert(src)
+	// alert(src)
 	  // insert * between digit and letter e.g. 2x --> 2*x
 	  src = src.replace(/([0-9])([a-df-zA-Z]|e^)/g,"$1*$2");
 	  src = src.replace(/\)([\(0-9a-zA-Z])/g,"\)*$1");
@@ -2240,7 +2175,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    with (Math) eval(src);          // here the svgpicture object is created
 	  } catch(err) {
 	    if (err!="wait") {
-	//alert(dsvglocation)
+	// alert(dsvglocation)
 	      if (typeof err=="object") 
 	        errstr = err.name+" "+err.message+" "+err.number+" "+err.description;
 	      else errstr = err;
@@ -2265,19 +2200,13 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	   picture = pictures[index-lastSlot];  // current picture object
 	   src = picture.getAttribute("script"); // get the ASCIIsvg code
 	   if (src==null) src = "";
-	   // insert "axes()" if not present  ******** experimental
+	   // insert "axes()" if not present ******** experimental
 	   if (!/axes\b|initPicture/.test(src)) {
 	     var i = 0;
 	     while (/((yscl|ymax|ymin|xscl|xmax|xmin|\bwidth|\bheight)\s*=\s*-?\d*(\d\.|\.\d|\d)\d*\s*;?)/.test(src.slice(i))) i++;
 	     src = (i==0?"axes(); "+src: src.slice(0,i)+src.slice(i).replace(/((scl|max|min|idth|eight)\s*=\s*-?\d*(\d\.|\.\d|\d)\d*\s*;?)/,"$1\naxes();"));
 	   }
 	   ht = picture.getAttribute("height");
-	   if (isIE) {
-	     picture.setAttribute("wmode","transparent");
-	//alert("*"+picture.getAttribute("src")+dsvglocation);
-	//adding d.svg dynamically greates problems in IE...
-	//     if (picture.getAttribute("src")=="") picture.setAttribute("src",dsvglocation+"d.svg");
-	   }
 	   if (document.getElementById("picture"+(index+1)+"mml")==null) {
 	     picture.parentNode.style.position = "relative";
 	     node = createElementXHTML("div");
@@ -2288,7 +2217,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	     picture.parentNode.insertBefore(node,picture.nextSibling);
 	   }
 	   if (ht==null) ht ="";
-	//   if (ht!="") defaultborder = 25;
+	// if (ht!="") defaultborder = 25;
 	   if (ht=="" || src=="") 
 	    if (document.getElementById("picture"+(index+1)+"input")==null) {
 	      node = createElementXHTML("textarea");
@@ -2297,8 +2226,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      for (i=0;i<arr.length;i++) cols = Math.max(cols,arr[i].length);
 	      node.setAttribute("rows",Math.min(10,arr.length)+1);
 	      node.setAttribute("cols",Math.max(Math.min(60,cols),20)+5);
-	//      node.setAttribute("style","display:block");
-	      if (isIE) src = src.replace(/([^\r])\n/g,"$1\r");
+	// node.setAttribute("style","display:block");
 	      node.appendChild(document.createTextNode(src));
 	      if (src.indexOf("showcode()")==-1) node.style.display = "none";
 	      node.setAttribute("id","picture"+(index+1)+"input");
@@ -2306,12 +2234,11 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      picture.parentNode.insertBefore(createElementXHTML("br"),node);
 	      node2 = createElementXHTML("button");
 	      node2.setAttribute("id","picture"+(index+1)+"button");
-	      if (isIE) node2.onclick = function() {updatePicture(this)};
-	      else node2.setAttribute("onclick","updatePicture(this)");
+	      node2.setAttribute("onclick","updatePicture(this)");
 	      node2.appendChild(document.createTextNode("Update"));
 	      if (src.indexOf("showcode()")==-1) node2.style.display = "none";
 	      picture.parentNode.insertBefore(node2,node);
-	//      picture.parentNode.insertBefore(document.createTextNode("ASCII"),node);
+	// picture.parentNode.insertBefore(document.createTextNode("ASCII"),node);
 	      picture.parentNode.insertBefore(createElementXHTML("br"),node);
 	    } else src = document.getElementById("picture"+(index+1)+"input").value;
 	    id = picture.getAttribute("id");
@@ -2325,7 +2252,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  lastSlot+=len;
 	}
 	
-	function setdefaults() { //called before each graph is evaluated
+	function setdefaults() { // called before each graph is evaluated
 	  strokewidth = defaultstrokewidth;
 	  stroke = defaultstroke;
 	  strokeopacity = defaultstrokeopacity;
@@ -2350,13 +2277,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  width = picture.getAttribute("width")-0;
 	  height = picture.getAttribute("height")-0;
 	  setdefaults();
-	  if ((picture.nodeName == "EMBED" || picture.nodeName == "embed") && isIE) {
-	    svgpicture = picture.getSVGDocument().getElementById("root");
-	    doc = picture.getSVGDocument();
-	  } else {
-	    svgpicture = picture;
-	    doc = document;
-	  }
+	  svgpicture = picture;
+	  doc = document;
 	  xunitlength = parseFloat(svgpicture.getAttribute("xunitlength"));
 	  yunitlength = parseFloat(svgpicture.getAttribute("yunitlength"));
 	  xmin = parseFloat(svgpicture.getAttribute("xmin"));
@@ -2388,7 +2310,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  src = src.replace(/width\s*=\s*\d+/,"width="+(factor*(pic.getAttribute("width")-0)));
 	  src = src.replace(/height\s*=\s*\d+/,"height="+(factor*(pic.getAttribute("height")-0)));
 	  document.getElementById(name+"input").value = src;
-	//alert(getKey(evt.keycode))
+	// alert(getKey(evt.keycode))
 	  updatePicture(name);
 	}
 	
@@ -2413,7 +2335,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  updatePicture(name);
 	}
 	
-	var sinceFirstClick = 0; // ondblclick simulation from 
+	var sinceFirstClick = 0; // ondblclick simulation from
 	var dblClkTimer;         // http://www.enja.org/david/?cat=13 Thanks!
 	function timer() {
 	  if(sinceFirstClick<60) {
@@ -2430,7 +2352,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      if (evt.shiftKey) {
 	        if (evt.altKey) changepicturesize(evt,2);
 	        else zoom(evt,.5);
-	      } else if (evt.altKey) zoom(evt,2);//changepicturesize(evt,.5);
+	      } else if (evt.altKey) zoom(evt,2);// changepicturesize(evt,.5);
 	      else showHideCode(evt);             // do this on dblclick
 	      clearTimeout(dblClkTimer);
 	      dblClkTimer = "";
@@ -2446,19 +2368,19 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	}
 	
 	function showHideCode(evt) { // called by onclick event
-	//  if (evt.getDetail()==2) {//getDetail unfortunately not in Firefox
+	// if (evt.getDetail()==2) {//getDetail unfortunately not in Firefox
 	  var obj=evt.target;
 	  var name = obj.parentNode.getAttribute("name");
 	  var node = document.getElementById(name+"input");
 	  node.style.display = (node.style.display == "none"?"":"none");
 	  var node = document.getElementById(name+"button");
 	  node.style.display = (node.style.display == "none"?"":"none");
-	//  }
+	// }
 	}
 	
 	function showcode() {} // do nothing
 	
-	function setBorder(x) { border = x } //deprecate
+	function setBorder(x) { border = x } // deprecate
 	
 	function initPicture(x_min,x_max,y_min,y_max) { // set up the graph
 	// usually called by axes() or noaxes(), but can be used directly
@@ -2489,7 +2411,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  picture.setAttribute("height",height);
 	  xunitlength = (width-2*border)/(xmax-xmin);
 	  yunitlength = xunitlength;
-	//alert(xmin+" "+xmax+" "+ymin+" "+ymax)
+	// alert(xmin+" "+xmax+" "+ymin+" "+ymax)
 	  if (ymin==null) {
 	    origin = [-xmin*xunitlength+border,height/2];
 	    ymin = -(height-2*border)/(2*yunitlength);
@@ -2499,32 +2421,14 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    else ymax = (height-2*border)/yunitlength + ymin;
 	    origin = [-xmin*xunitlength+border,-ymin*yunitlength+border];
 	  }
-	  if (isIE) {
-	    if (picture.FULLSCREEN==undefined) {
-	      setTimeout('drawPictures()',50);
-	      throw "wait";
-	    }
-	    svgpicture = picture.getSVGDocument().getElementById("root");
-	    if (svgpicture==null) {
-	      setTimeout('drawPictures()',50);
-	      throw "wait";
-	    }
-	    svgpicture = picture.getSVGDocument().getElementById("root");
-	    while (svgpicture.childNodes.length>0) 
-	      svgpicture.removeChild(svgpicture.lastChild); 
-	    svgpicture.setAttribute("width",width);
-	    svgpicture.setAttribute("height",height);
-	    svgpicture.setAttribute("name",picture.getAttribute("id"));
-	    doc = picture.getSVGDocument();
-	  } else {
 	    var qnode = document.createElementNS("http://www.w3.org/2000/svg","svg");
 	    qnode.setAttribute("id",picture.getAttribute("id"));
 	    qnode.setAttribute("name",picture.getAttribute("id"));
-	//    qnode.setAttribute("style","display:inline");
+	// qnode.setAttribute("style","display:inline");
 	    qnode.setAttribute("width",picture.getAttribute("width"));
 	    qnode.setAttribute("height",picture.getAttribute("height"));
 	    picturepos = findPos(picture);
-	//  qnode.setAttribute("xmlns:xlink","http://www.w3.org/1999/xlink");
+	// qnode.setAttribute("xmlns:xlink","http://www.w3.org/1999/xlink");
 	    if (picture.parentNode!=null) {
 	      picture.parentNode.replaceChild(qnode,picture);
 	    } else {
@@ -2532,7 +2436,6 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    }
 	    svgpicture = qnode;
 	    doc = document;
-	  }
 	  var nd = document.getElementById(picture.getAttribute("id")+"mml");
 	  if (nd!=null) // clear out MathML layer
 	    while (nd.childNodes.length>0) nd.removeChild(nd.lastChild); 
@@ -2567,9 +2470,11 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	 }
 	}
 	
-	//////////////////////////user graphics commands start/////////////////////////
+	// ////////////////////////user graphics commands
+	// start/////////////////////////
 	
-	function line(p,q,id,endpts) { // segment connecting points p,q (coordinates in units)
+	function line(p,q,id,endpts) { // segment connecting points p,q
+									// (coordinates in units)
 	  var node;
 	  if (id!=null) node = doc.getElementById(id);
 	  if (node==null) {
@@ -2681,7 +2586,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	
 	function arc(start,end,radius,id,largearc) { // coordinates in units
 	  var node, v;
-	//alert([fill, stroke, origin, xunitlength, yunitlength, height])
+	// alert([fill, stroke, origin, xunitlength, yunitlength, height])
 	  if (id!=null) node = doc.getElementById(id);
 	  if (largearc==null) largearc=0;
 	  if (radius==null) {
@@ -2705,7 +2610,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  if (marker=="arrow" || marker=="arrowdot") {
 	    u = [(end[1]-start[1])/4,(start[0]-end[0])/4];
 	    v = [(end[0]-start[0])/2,(end[1]-start[1])/2];
-	//alert([u,v])
+	// alert([u,v])
 	    v = [start[0]+v[0]+u[0],start[1]+v[1]+u[1]];
 	  } else v=[start[0],start[1]];
 	  if (marker=="dot" || marker=="arrowdot") {
@@ -2715,7 +2620,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  } else if (marker=="arrow") arrowhead(v,end);
 	}
 	
-	function sector(center,start,end,id) { // center,start,end should be isoceles
+	function sector(center,start,end,id) { // center,start,end should be
+											// isoceles
 	  var rx = start[0]-center[0], ry = start[1]-center[1];
 	  arc(start,end,Math.sqrt(rx*rx+ry*ry),id+"arc");
 	  path([end,center,start],id+"path");
@@ -2744,7 +2650,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  path([p,q,r,p],id)
 	}
 	
-	function rect(p,q,id,rx,ry) { // opposite corners in units, rounded by radii
+	function rect(p,q,id,rx,ry) { // opposite corners in units, rounded by
+									// radii
 	  var node;
 	  if (id!=null) node = doc.getElementById(id);
 	  if (node==null) {
@@ -2772,7 +2679,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    if (dnode!=null) {
 	      if (id!=null) node = document.getElementById(id);
 	      if (node==null) {
-	//alert(dnode.childNodes.length)
+	// alert(dnode.childNodes.length)
 	        node = createElementXHTML("div");
 	        node.setAttribute("id", id);
 	        node.style.position = "absolute";
@@ -2823,7 +2730,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  return p;
 	}
 	
-	function mtext(p,st,pos,fontsty,fontsz) { // method for updating text on an svg
+	function mtext(p,st,pos,fontsty,fontsz) { // method for updating text on
+												// an svg
 	// "this" is the text object or the svgpicture object
 	  var textanchor = "middle";
 	  var dx = 0; var dy = fontsize/3;
@@ -2927,7 +2835,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    text(center,label,(pos==null?"below":pos),(id==null?id:id+"label"))
 	}
 	
-	point = dot; //alternative name
+	point = dot; // alternative name
 	
 	function arrowhead(p,q) { // draw arrowhead at q (in units) add size param
 	  var up;
@@ -2943,8 +2851,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      (w[1]-15*u[1]-4*up[1])+" L "+(w[0]-3*u[0])+" "+(w[1]-3*u[1])+" L "+
 	      (w[0]-15*u[0]+4*up[0])+" "+(w[1]-15*u[1]+4*up[1])+" z");
 	    node.setAttribute("stroke-width", markerstrokewidth);
-	    node.setAttribute("stroke", stroke); /*was markerstroke*/
-	    node.setAttribute("fill", stroke); /*was arrowfill*/
+	    node.setAttribute("stroke", stroke); /* was markerstroke */
+	    node.setAttribute("fill", stroke); /* was arrowfill */
 	    node.setAttribute("stroke-opacity", strokeopacity);
 	    node.setAttribute("fill-opacity", fillopacity);
 	    svgpicture.appendChild(node);    
@@ -2968,7 +2876,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	}
 	
 	function axes(dx,dy,labels,gdx,gdy) {
-	//xscl=x is equivalent to xtick=x; xgrid=x; labels=true;
+	// xscl=x is equivalent to xtick=x; xgrid=x; labels=true;
 	  var x, y, ldx, ldy, lx, ly, lxp, lyp, pnode, st;
 	  if (!initialized) initPicture();
 	  if (typeof dx=="string") { labels = dx; dx = null; }
@@ -2979,7 +2887,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  if (ytick!=null) {dy = ytick}
 	  dx = (dx==null?xunitlength:dx*xunitlength);
 	  dy = (dy==null?dx:dy*yunitlength);
-	  fontsize = Math.min(dx/2,dy/2,16); //alert(fontsize)
+	  fontsize = Math.min(dx/2,dy/2,16); // alert(fontsize)
 	  ticklength = fontsize/4;
 	  if (xgrid!=null) gdx = xgrid;
 	  if (ygrid!=null) gdy = ygrid;
@@ -3044,14 +2952,14 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	}
 	
 	function mathjs(st) {
-	  //translate a math formula to js function notation
+	  // translate a math formula to js function notation
 	  // a^b --> pow(a,b)
 	  // na --> n*a
 	  // (...)d --> (...)*d
 	  // n! --> factorial(n)
 	  // sin^-1 --> arcsin etc.
-	  //while ^ in string, find term on left and right
-	  //slice and concat new formula string
+	  // while ^ in string, find term on left and right
+	  // slice and concat new formula string
 	  st = st.replace(/\s/g,"");
 	  if (st.indexOf("^-1")!=-1) {
 	    st = st.replace(/sin\^-1/g,"arcsin");
@@ -3070,12 +2978,12 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  st = st.replace(/^e$/g,"(Math.E)");
 	  st = st.replace(/^e([^a-zA-Z])/g,"(Math.E)$1");
 	  st = st.replace(/([^a-zA-Z])e/g,"$1(Math.E)");
-	//  st = st.replace(/([^a-zA-Z])e([^a-zA-Z])/g,"$1(Math.E)$2");
+	// st = st.replace(/([^a-zA-Z])e([^a-zA-Z])/g,"$1(Math.E)$2");
 	  st = st.replace(/([0-9])([\(a-zA-Z])/g,"$1*$2");
 	  st = st.replace(/\)([\(0-9a-zA-Z])/g,"\)*$1");
 	  var i,j,k, ch, nested;
 	  while ((i=st.indexOf("^"))!=-1) {
-	    //find left argument
+	    // find left argument
 	    if (i==0) return "Error: missing argument";
 	    j = i-1;
 	    ch = st.charAt(j);
@@ -3086,7 +2994,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	        j--;
 	        while (j>=0 && (ch=st.charAt(j))>="0" && ch<="9") j--;
 	      }
-	    } else if (ch==")") {// look for matching opening bracket and function name
+	    } else if (ch==")") {// look for matching opening bracket and
+								// function name
 	      nested = 1;
 	      j--;
 	      while (j>=0 && nested>0) {
@@ -3097,14 +3006,15 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      }
 	      while (j>=0 && (ch=st.charAt(j))>="a" && ch<="z" || ch>="A" && ch<="Z")
 	        j--;
-	    } else if (ch>="a" && ch<="z" || ch>="A" && ch<="Z") {// look for variable
+	    } else if (ch>="a" && ch<="z" || ch>="A" && ch<="Z") {// look for
+																// variable
 	      j--;
 	      while (j>=0 && (ch=st.charAt(j))>="a" && ch<="z" || ch>="A" && ch<="Z")
 	        j--;
 	    } else { 
 	      return "Error: incorrect syntax in "+st+" at position "+j;
 	    }
-	    //find right argument
+	    // find right argument
 	    if (i==st.length-1) return "Error: missing argument";
 	    k = i+1;
 	    ch = st.charAt(k);
@@ -3115,7 +3025,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	        k++;
 	        while (k<st.length && (ch=st.charAt(k))>="0" && ch<="9") k++;
 	      }
-	    } else if (ch=="(") {// look for matching closing bracket and function name
+	    } else if (ch=="(") {// look for matching closing bracket and
+								// function name
 	      nested = 1;
 	      k++;
 	      while (k<st.length && nested>0) {
@@ -3124,7 +3035,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	        else if (ch==")") nested--;
 	        k++;
 	      }
-	    } else if (ch>="a" && ch<="z" || ch>="A" && ch<="Z") {// look for variable
+	    } else if (ch>="a" && ch<="z" || ch>="A" && ch<="Z") {// look for
+																// variable
 	      k++;
 	      while (k<st.length && (ch=st.charAt(k))>="a" && ch<="z" ||
 	               ch>="A" && ch<="Z") k++;
@@ -3135,7 +3047,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	           st.slice(k);
 	  }
 	  while ((i=st.indexOf("!"))!=-1) {
-	    //find left argument
+	    // find left argument
 	    if (i==0) return "Error: missing argument";
 	    j = i-1;
 	    ch = st.charAt(j);
@@ -3146,7 +3058,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	        j--;
 	        while (j>=0 && (ch=st.charAt(j))>="0" && ch<="9") j--;
 	      }
-	    } else if (ch==")") {// look for matching opening bracket and function name
+	    } else if (ch==")") {// look for matching opening bracket and
+								// function name
 	      nested = 1;
 	      j--;
 	      while (j>=0 && nested>0) {
@@ -3157,7 +3070,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	      }
 	      while (j>=0 && (ch=st.charAt(j))>="a" && ch<="z" || ch>="A" && ch<="Z")
 	        j--;
-	    } else if (ch>="a" && ch<="z" || ch>="A" && ch<="Z") {// look for variable
+	    } else if (ch>="a" && ch<="z" || ch>="A" && ch<="Z") {// look for
+																// variable
 	      j--;
 	      while (j>=0 && (ch=st.charAt(j))>="a" && ch<="z" || ch>="A" && ch<="Z")
 	        j--;
@@ -3186,7 +3100,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  var inc = max-min-0.000001*(max-min);
 	  inc = (points==null?inc/200:inc/points);
 	  var gt;
-	//alert(typeof g(min))
+	// alert(typeof g(min))
 	  for (var t = min; t <= max; t += inc) {
 	    gt = g(t);
 	    if (!(isNaN(gt)||Math.abs(gt)=="Infinity")) pth[pth.length] = [f(t), gt];
@@ -3220,7 +3134,8 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    }
 	}
 	
-	///////////////////////user graphics commands end here/////////////////////////
+	// /////////////////////user graphics commands end
+	// here/////////////////////////
 	
 	function show_props(obj) {
 	  var result = "";
@@ -3237,10 +3152,11 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    var cnode = nl.item(i);
 	    cnode.mtext = mtext;
 	    cnode.mtext([svgroot.getAttribute("width")-(-7),svgroot.getAttribute("height")-7],"("+getX(evt).toFixed(2)+", "+getY(evt).toFixed(2)+")", "left", "", "11");
-	/*    var dnode = nl.item(i+1);
-	    dnode.mtext = mtext;
-	    dnode.mtext([0,svgroot.getAttribute("height")-6],"Try (shift/alt)-dblclick", "right", "", "8");
-	*/  }
+	/*
+	 * var dnode = nl.item(i+1); dnode.mtext = mtext;
+	 * dnode.mtext([0,svgroot.getAttribute("height")-6],"Try
+	 * (shift/alt)-dblclick", "right", "", "8");
+	 */  }
 	}
 	
 	function removeCoord(evt) {
@@ -3250,10 +3166,10 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	    var cnode = nl.item(i);
 	    cnode.mtext = mtext;
 	    cnode.mtext([svgroot.getAttribute("width")-0,svgroot.getAttribute("height")-0],"", "aboveleft", "");
-	/*    var dnode = nl.item(i+1);
-	    dnode.mtext = mtext;
-	    dnode.mtext([0,svgroot.getAttribute("height")-0],"", "aboveright", "");
-	*/}
+	/*
+	 * var dnode = nl.item(i+1); dnode.mtext = mtext;
+	 * dnode.mtext([0,svgroot.getAttribute("height")-0],"", "aboveright", "");
+	 */}
 	
 	function initASCIIMathCalculators(li) {
 	  var i;
@@ -3282,7 +3198,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	  }
 	  if (!isNaN(res) && res!="Infinity") 
 	    str = "`"+str+" =` "+(Math.abs(res-Math.round(res*1000000)/1000000)<1e-15?Math.round(res*1000000)/1000000:res)+err; 
-	  else if (str!="") str = "`"+str+"` = undefined"; //debug:+mathjs(str);
+	  else if (str!="") str = "`"+str+"` = undefined"; // debug:+mathjs(str);
 	  var outnode = document.getElementById(outputId);
 	  var n = outnode.childNodes.length;
 	  for (var i=0; i<n; i++)
@@ -3306,61 +3222,55 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 	
 	var calcstr = "<table align=\"center\">\n<tr><th>\nASCIIMath Scientific Calculator\n</th></tr>\n<tr><td>\nClick in the box to use your keyboard or use the buttons\n</td></tr>\n<tr><td>\n<textarea id=\"in\" rows=\"3\" cols=\"40\" onkeyup=\"calculate('in','out')\"></textarea></td></tr>\n<tr><td height=\"50\">Result: &nbsp; &nbsp; <span id=\"out\"></span></td></tr>\n</table>\n<table align=\"center\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody align=\"center\">\n<tr>\n<td colspan=\"4\">\n<button onclick=\"append('sin^-1(')\"><font size=2>`sin^-1`</font></button><button onclick=\"append('cos^-1(')\"><font size=2>`cos^-1`</font></button><button onclick=\"append('tan^-1(')\"><font size=2>`tan^-1`</font></button></td>\n<td><button onclick=\"clearTextArea()\">&nbsp;`C`&nbsp;</button></td>\n\n</tr>\n<tr>\n<td><button onclick=\"append('pi')\">&nbsp;`pi` &nbsp;</button></td>\n<td><button onclick=\"append('sin(')\">&nbsp;`sin`</button></td>\n<td><button onclick=\"append('cos(')\">&nbsp;`cos`</button></td>\n<td><button onclick=\"append('tan(')\">&nbsp;`tan`</button></td>\n<td><button onclick=\"append('^')\">`x^y`</button></td>\n</tr>\n<tr>\n<td><button onclick=\"append('!')\">&nbsp; `!` &nbsp;</button></td>\n\n<td><button onclick=\"append('(')\"><font size=2>&nbsp;&nbsp;`(`&nbsp;&nbsp;</font></button></td>\n<td><button onclick=\"append(')')\"><font size=2>&nbsp;&nbsp;`)`&nbsp;&nbsp;</font></button></td>\n<td><button onclick=\"append('sqrt(')\"><font size=2>`sqrt({::}^\ )`</font></button></td>\n<td><button onclick=\"append('/')\">&nbsp;`-:\ `</button></td>\n</tr>\n<tr>\n<td><button onclick=\"append('log(')\">`log`</button></td>\n<td><button onclick=\"append('7')\">&nbsp; `7` &nbsp;</button></td>\n<td><button onclick=\"append('8')\">&nbsp; `8` &nbsp;</button></td>\n\n<td><button onclick=\"append('9')\">&nbsp; `9` &nbsp;</button></td>\n<td><button onclick=\"append('*')\">&nbsp;`times`&nbsp;</button></td>\n</tr>\n<tr>\n<td><button onclick=\"append('ln(')\">&nbsp;`ln`&nbsp;</button></td>\n<td><button onclick=\"append('4')\">&nbsp; `4` &nbsp;</button></td>\n<td><button onclick=\"append('5')\">&nbsp; `5` &nbsp;</button></td>\n<td><button onclick=\"append('6')\">&nbsp; `6` &nbsp;</button></td>\n\n<td><button onclick=\"append('-')\">&nbsp;`-{::}`&nbsp;</button></td>\n</tr>\n<tr>\n<td><button onclick=\"append('e')\">&nbsp; `e` &nbsp;</button></td>\n<td><button onclick=\"append('1')\">&nbsp;&nbsp;`1` &nbsp;</button></td>\n<td><button onclick=\"append('2')\">&nbsp; `2` &nbsp;</button></td>\n<td><button onclick=\"append('3')\">&nbsp; `3` &nbsp;</button></td>\n<td><button onclick=\"append('+')\">&nbsp;`+{::}`&nbsp;</button></td>\n\n</tr>\n<tr>\n<td> <!--button onclick=\"append('pi')\">&nbsp;`pi` &nbsp;</button--></td>\n<td><button onclick=\"append('0')\">&nbsp; `0` &nbsp;</button></td>\n<td><button onclick=\"append('.')\">&nbsp; `.` &nbsp;</button></td>\n<td><button onclick=\"append('\\n')\">&nbsp;`\"ent\"`</button></td>\n</tr>\n</tbody>\n</table>";
 	
-	// GO1.1 Generic onload by Brothercake
-	// http://www.brothercake.com/
-	//onload function (replaces the onload="translate()" in the <body> tag)
-	function generic()
-	{
-	  if(!init()) return;
-	  if (translateOnLoad) {
-	    var nd = document.getElementById("processasciimathinmoodle");
-	    if (nd!=null) dsvglocation = nd.className;
-	    if (nd!=null || !checkforprocessasciimathinmoodle) {
-	      translate();
-	      if (!noSVG && translateASCIIsvg) drawPictures();
-	    }
-	    var li = getElementsByClass(document,"div","ASCIIMathCalculator");
-	    if (!noMathML && li.length>0) initASCIIMathCalculators(li);
-	  }
-	};
-	//setup onload function
-	if(typeof window.addEventListener != 'undefined')
-	{
-	  //.. gecko, safari, konqueror and standard
-	  window.addEventListener('load', generic, false);
+	this.autoParse = function(str, options) {
+	  init();
+	  options = options || { };
+      str = str.replace(/\r\n\r\n/g,"\n\n");
+      str = str.replace(/\x20+/g," ");
+      str = str.replace(/\s*\r\n/g," ");
+      /*
+		 * if(latex) { // DELIMITERS: mtch = (str.indexOf("\$")==-1 ? false :
+		 * true); str = str.replace(/([^\\])\$/g,"$1 \$"); str =
+		 * str.replace(/^\$/," \$"); // in case \$ at start of string arr =
+		 * str.split(" \$"); for (i=0; i<arr.length; i++)
+		 * arr[i]=arr[i].replace(/\\\$/g,"\$"); } else {
+		 */
+      mtch = false;
+      var keywordFound = false;
+      str = str.replace(new RegExp(AMescape1, "g"),
+              function(){mtch = true; return "AMescape1"});
+      str = str.replace(/\\?end{?a?math}?/i,
+              function(){keywordFound = false; mtch = true; return ""});
+      str = str.replace(/amath\b|\\begin{a?math}/i,
+              function(){keywordFound = true; mtch = true; return ""});
+      arr = str.split(AMdelimiter1);
+      if (options.auto == 'always' || (options.auto != 'never' && keywordFound))
+	      for (var i=0; i<arr.length; i++)
+	        if (i%2==0) arr[i] = AMautomathrec(arr[i]);
+      str = arr.join(AMdelimiter1);
+      arr = str.split(AMdelimiter1);
+      for (i=0; i<arr.length; i++) // this is a problem ************
+        arr[i]=arr[i].replace(/AMescape1/g,AMdelimiter1);
+      // }
+      if (arr.length>1 || mtch) {
+        var fragment = strarr2docFrag(arr,false,false /*
+														 * false: ascii, true:
+														 * latex
+														 */);
+		var div = document.createElement('div');
+		div.appendChild(fragment);
+		return div.innerHTML;
+      } else
+        return str;
 	}
-	else if(typeof document.addEventListener != 'undefined')
-	{
-	  //.. opera 7
-	  document.addEventListener('load', generic, false);
+	
+	this.parse = function(ascii) {
+		init();
+		var tag = parseMath(ascii);
+		var div = document.createElement('div');
+		div.appendChild(tag);
+		return div.innerHTML;
 	}
-	else if(typeof window.attachEvent != 'undefined')
-	{
-	  //.. win/ie
-	  window.attachEvent('onload', generic);
-	}
-	//** remove this condition to degrade older browsers
-	else
-	{
-	  //.. mac/ie5 and anything else that gets this far
-	  //if there's an existing onload function
-	  if(typeof window.onload == 'function')
-	  {
-	    //store it
-	    var existing = onload;
-	    //add new onload handler
-	    window.onload = function()
-	    {
-	      //call existing onload function
-	      existing();
-	      //call generic onload function
-	      generic();
-	    };
-	  }
-	  else
-	  {
-	    //setup onload function
-	    window.onload = generic;
-	  }
-	}
+	
+	this.AMautomathrec = AMautomathrec;
 })();

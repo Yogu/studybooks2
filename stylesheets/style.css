@@ -1,7 +1,4 @@
-body > * {
-	font-family: Verdana, sans-serif;
-	font-size: 12px;
-}
+/* ================= layout ================= */
 
 #input-wrap,
 #output-wrap {
@@ -18,20 +15,28 @@ body > * {
 
 #output {
 	padding: 3px;
+	background: #eeeeee;
 }
 
 body {
 	padding: 20px;
 }
 
+#editor {
+	overflow: hidden;
+}
+
+/* ================= general ================= */
+
+body > * {
+	font-family: Verdana, sans-serif;
+	font-size: 12px;
+}
+
 h2 {
 	font-size: 16px;
 	font-weight: bold;
 	margin: 1em 0;
-}
-
-#editor {
-	overflow: hidden;
 }
 
 em {
@@ -64,6 +69,8 @@ table td:nth-child(2n + 1) {
 table td:nth-child(2n) {
 	background: #EEEEEE;
 }
+
+/* ================= test results ================= */
 
 .results li {
 	list-style: none;
@@ -103,4 +110,19 @@ table td:nth-child(2n) {
 .fail {
 	background: #800000 !important;
 	color: white;
+}
+
+/* ================= content ================= */ 
+
+.content p {
+	margin: 0.5em 0;
+	line-height: 1.3em;
+}
+
+p:first-child {
+	margin-top: 0;
+}
+
+p:last-child {
+	margin-bottom: 0;
 }

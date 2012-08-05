@@ -1,18 +1,19 @@
-"use strict";
-
-window.app = { };
+"use strict"
 
 $(function() {
 	// Editor
 	(function () {
-		var parser = new app.Parser();
-		$('#input').on('change keydown keyup keypress', function() {
+		var worker = new Worker('scripts/parserworker.js');
+		worker.onMessage = function(event) {
+			$('#output').html(event.data);
+		}
+		$('#input').on('change keypress', function() {
 			update();
 		});
-		function update() {
-			$('#output').html(parser.parse($('#input').val()));
-		}
 		update();
+		function update() {
+			worker.postMessage($('#input').val());
+		}
 	})();
 	
 	// Tests
