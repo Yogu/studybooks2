@@ -46,7 +46,7 @@
 			for (var i = 0; i < tests.length; i++) {
 				var test = tests[i];
 				var output = parser.parse(test.source);
-				output = output.replace(/\s+/, ' ').trim();
+				output = output.replace(/\s+/g, ' ').trim();
 				var success = output == test.output;
 				if (!success)
 					overallSuccess = false;
