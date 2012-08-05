@@ -77,7 +77,8 @@ table td:nth-child(2n) {
 }
 
 .results .fail .label,
-.results .source {
+.results .source,
+.results .expected-output {
 	margin-bottom: 0.5em;
 }
 
@@ -85,6 +86,7 @@ table td:nth-child(2n) {
 .results .expected-output,
 .results .actual-output {
 	font-family: monospace;
+	white-space: pre;
 }
 
 .results .success .source,
