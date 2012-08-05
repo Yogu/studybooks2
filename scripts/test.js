@@ -20,7 +20,7 @@
 			{
 				label: 'line-break',
 				source: 'abc\ndef',
-				output: '<p>abc<br />def</p>',
+				output: '<p>abc <br> def</p>',
 			},
 			{
 				label: 'italic',
