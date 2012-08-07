@@ -4,10 +4,13 @@ $(function() {
 	// Editor
 	(function () {
 		var worker = new Worker('scripts/parserworker.js');
-		worker.onMessage = function(event) {
+		worker.onmessage = function(event) {
 			$('#output').html(event.data);
 		}
-		$('#input').on('change keypress', function() {
+		worker.onerror = function(event) {
+			alert('error');
+		}
+		$('#input').on('change keydown keypress keyup', function() {
 			update();
 		});
 		update();

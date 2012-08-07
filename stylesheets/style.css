@@ -15,7 +15,6 @@
 
 #output {
 	padding: 3px;
-	background: #eeeeee;
 }
 
 body {
@@ -114,15 +113,34 @@ table td:nth-child(2n) {
 
 /* ================= content ================= */ 
 
-.content p {
-	margin: 0.5em 0;
+.content p,
+.content pre {
+	margin: 0.8em 0;
 	line-height: 1.3em;
 }
 
-p:first-child {
+p:first-child,
+.content pre:first-child {
 	margin-top: 0;
 }
 
-p:last-child {
+p:last-child,
+.content pre:last-child {
 	margin-bottom: 0;
+}
+
+.content pre {
+	white-space: pre;
+	font-family: monospace;
+	font-size: 14px; 
+}
+
+.content math {
+	font-size: 14px;
+}
+
+.content code,
+.content math {
+	background: #EEEEEE;
+	padding: 3px;
 }

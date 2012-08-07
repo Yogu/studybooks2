@@ -6,6 +6,41 @@
 	app.test.ParserTest = function() {
 		var tests = [
  			{
+				label: 'math',
+				source: 'a test: °a^2°',
+				output: '<p>a test:<math title="a^2"><msup><mi>a</mi><mn>2</mn></msup></math></p>'
+			},
+ 			{
+				label: 'math2',
+				source: '°a°',
+				output: '<p><math title="a"><mi>a</mi></math></p>'
+			},
+ 			{
+				label: 'math3',
+				source: '°a°°°',
+				output: '<p><math title="a°"><mi>a</mi><mo>°</mo></math></p>'
+			},
+ 			{
+				label: 'math3b',
+				source: '°a° °°',
+				output: '<p><math title="a"><mi>a</mi></math>°°</p>'
+			},
+ 			{
+				label: 'math4',
+				source: '°a° °b°',
+				output: '<p><math title="a"><mi>a</mi></math><math title="b"><mi>b</mi></math></p>'
+			},
+ 			{
+				label: 'math5',
+				source: '°a° °',
+				output: '<p><math title="a"><mi>a</mi></math>°</p>'
+			},
+ 			{
+				label: 'math6',
+				source: '°a° a°b',
+				output: '<p><math title="a"><mi>a</mi></math>a°b</p>'
+			},
+ 			{
 				label: 'empty',
 				source: '',
 				output: '',
