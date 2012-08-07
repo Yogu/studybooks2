@@ -1,9 +1,9 @@
 Parser = function() {
 	var converter = new Markdown.Converter();
 	converter.hooks.set('preSpanProcess', function(a) {
-		a = (' ' + a + ' ').replace(/°((°°|[^°])+)°([^°])/g, function(total, expression, dummy, after) {
+		a = (' ' + a + ' ').replace(/(\s)°((°°|[^°])+)°(\s)/g, function(total, before, expression, dummy, after) {
 			expression = expression.replace('°°', '°');
-			return ASCIIMathML.parse(expression.trim()) + after;
+			return before + ASCIIMathML.parse(expression.trim()) + after;
 		}); 
 		return a;
 	});

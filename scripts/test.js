@@ -41,6 +41,11 @@
 				output: '<p><math title="a"><mi>a</mi></math>a°b</p>'
 			},
  			{
+				label: 'math7',
+				source: '360° °a° 370°',
+				output: '<p>360°<math title="a"><mi>a</mi></math>370°</p>'
+			},
+ 			{
 				label: 'empty',
 				source: '',
 				output: '',

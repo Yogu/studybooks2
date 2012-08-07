@@ -15,6 +15,7 @@
 
 #output {
 	padding: 3px;
+	overflow: auto;
 }
 
 body {
@@ -114,25 +115,38 @@ table td:nth-child(2n) {
 /* ================= content ================= */ 
 
 .content p,
+.content li,
 .content pre {
 	margin: 0.8em 0;
 	line-height: 1.3em;
 }
 
 p:first-child,
+li:first-child,
 .content pre:first-child {
 	margin-top: 0;
 }
 
 p:last-child,
+li:last-child,
 .content pre:last-child {
 	margin-bottom: 0;
+}
+
+.content ul li {
+	list-style: disc;
+	margin-left: 30px;
 }
 
 .content pre {
 	white-space: pre;
 	font-family: monospace;
 	font-size: 14px; 
+}
+
+.content pre code {
+	display: block;
+	margin: 0;
 }
 
 .content math {
@@ -142,5 +156,7 @@ p:last-child,
 .content code,
 .content math {
 	background: #EEEEEE;
-	padding: 3px;
+	padding: 2px;
+	margin: 1px;
+	display: inline-block;
 }
