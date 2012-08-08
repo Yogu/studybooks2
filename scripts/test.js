@@ -6,44 +6,59 @@
 	app.test.ParserTest = function() {
 		var tests = [
  			{
-				label: 'math',
+				label: 'math-start',
 				source: 'a test: °a^2°',
 				output: '<p>a test:<math title="a^2"><msup><mi>a</mi><mn>2</mn></msup></math></p>'
 			},
  			{
-				label: 'math2',
+				label: 'math-start2',
 				source: '°a°',
 				output: '<p><math title="a"><mi>a</mi></math></p>'
 			},
  			{
-				label: 'math3',
+				label: 'math-start3',
 				source: '°a°°°',
 				output: '<p><math title="a°"><mi>a</mi><mo>°</mo></math></p>'
 			},
  			{
-				label: 'math3b',
+				label: 'math-start4',
 				source: '°a° °°',
 				output: '<p><math title="a"><mi>a</mi></math>°°</p>'
 			},
  			{
-				label: 'math4',
-				source: '°a° °b°',
+				label: 'math-start5',
+				source: '°a°  °b°',
 				output: '<p><math title="a"><mi>a</mi></math><math title="b"><mi>b</mi></math></p>'
 			},
  			{
-				label: 'math5',
+				label: 'math-start6',
+				source: '°a° 1 °b°',
+				output: '<p><math title="a"><mi>a</mi></math>1<math title="b"><mi>b</mi></math></p>'
+			},
+ 			{
+				label: 'math-start7',
 				source: '°a° °',
 				output: '<p><math title="a"><mi>a</mi></math>°</p>'
 			},
  			{
-				label: 'math6',
+				label: 'math-start8',
 				source: '°a° a°b',
 				output: '<p><math title="a"><mi>a</mi></math>a°b</p>'
 			},
  			{
-				label: 'math7',
+				label: 'math-start9',
 				source: '360° °a° 370°',
 				output: '<p>360°<math title="a"><mi>a</mi></math>370°</p>'
+			},
+ 			{
+				label: 'math-sqrt',
+				source: '°sqrt2°',
+				output: '<p><math title="sqrt2"><msqrt><mn>2</mn></msqrt></math></p>'
+			},
+ 			{
+				label: 'math-pow',
+				source: '°a^2°',
+				output: '<p><math title="a^2"><msup><mi>a</mi><mn>2</mn></msup></math></p>'
 			},
  			{
 				label: 'empty',
@@ -109,10 +124,13 @@
 				if (!success)
 					overallSuccess = false;
 				var result = {label: test.label, source: test.source, expectedOutput: test.output, actualOutput: output, success: success };
-				results.push(result);
+				if (success)
+					results.push(result);
+				else
+					results.unshift(result);
 			}
 			results.success = overallSuccess;
 			return results;
-		}
+		};
 	};
 })();

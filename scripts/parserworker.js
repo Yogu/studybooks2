@@ -1,6 +1,6 @@
 importScripts('ASCIIMathML.js', 'Markdown.Converter.js', 'parser.js');
 
-var waitTime = 100;
+var waitTime = 0;
 var parser = new Parser();
 var currentRequest;
 var timeout = null;
