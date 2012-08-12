@@ -1437,6 +1437,90 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
 
     doWork();
   }
+  
+  function prettifySource(source) {
+    var job = {
+      sourceCode: source,
+      spans: [],
+      basePos: 0
+     };
+
+    // Apply the appropriate language handler
+    langHandlerForExtension(undefined, source)(job);
+
+    // Integrate the decorations and tags back into the source code
+    return applyDecorations(job);
+  }
+
+
+  /**
+   * Breaks {@code job.sourceCode} around style boundaries in
+   * {@code job.decorations} and modifies {@code job.sourceNode} in place.
+   * @param {Object} job like <pre>{
+   *    sourceCode: {string} source as plain text,
+   *    spans: {Array.<number|Node>} alternating span start indices into source
+   *       and the text node or element (e.g. {@code <BR>}) corresponding to that
+   *       span.
+   *    decorations: {Array.<number|string} an array of style classes preceded
+   *       by the position at which they start in job.sourceCode in order
+   * }</pre>
+   * @private
+   */
+  function applyDecorations(job) {
+    var isIE = /\bMSIE\b/.test(navigator.userAgent);
+    var newlineRe = /\n/g;
+  
+    var source = job.sourceCode;
+    var sourceLength = source.length;
+  
+    var decorations = job.decorations;
+    var nDecorations = decorations.length;
+    // Index into decorations after the last decoration which ends at or before
+    // sourceIndex.
+    var decorationIndex = 0;
+  
+    // Remove all zero-length decorations.
+    decorations[nDecorations] = sourceLength;
+    var decPos, i;
+    for (i = decPos = 0; i < nDecorations;) {
+      if (decorations[i] !== decorations[i + 2]) {
+        decorations[decPos++] = decorations[i++];
+        decorations[decPos++] = decorations[i++];
+      } else {
+        i += 2;
+      }
+    }
+    nDecorations = decPos;
+  
+    // Simplify decorations.
+    for (i = decPos = 0; i < nDecorations;) {
+      var startPos = decorations[i];
+      // Conflate all adjacent decorations that use the same style.
+      var startDec = decorations[i + 1];
+      var end = i + 2;
+      while (end + 2 <= nDecorations && decorations[end + 1] === startDec) {
+        end += 2;
+      }
+      decorations[decPos++] = startPos;
+      decorations[decPos++] = startDec;
+      i = end;
+    }
+
+    var decorationCount = decPos / 2;
+
+	var output = '';
+    for (var i = 0; i < decorationCount; i++) {
+    	var index = decorations[2 * i];
+    	var className = decorations[2 * i + 1];
+    	var nextIndex = (i < decorationCount - 1) ? decorations[2 * i + 2] : sourceLength;
+    	var begin = '<span class="' + className + '">';
+    	var end = '</span>';
+    	
+    	// Add new source code
+    	output += begin + source.substr(index, nextIndex - index) + end;
+    }
+    return output;
+  }
 
    /**
     * Find all the {@code <pre>} and {@code <code>} tags in the DOM with
@@ -1453,6 +1537,9 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
     * @return {string} code as html, but prettier
     */
   self['prettyPrint'] = prettyPrint;
+  
+  self['prettifySource'] = prettifySource;
+  
    /**
     * Contains functions for creating and registering new language handlers.
     * @type {Object}

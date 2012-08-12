@@ -10,7 +10,7 @@
   .typ { color: #606 }  /* a type name */
   .lit { color: #066 }  /* a literal value */
   /* punctuation, lisp open bracket, lisp close bracket */
-  .pun, .opn, .clo { color: #660 }
+  .pun, .opn, .clo { color: #000 }
   .tag { color: #008 }  /* a markup tag name */
   .atn { color: #606 }  /* a markup attribute name */
   .atv { color: #080 }  /* a markup attribute value */
@@ -25,7 +25,7 @@
   .com { color: #600; font-style: italic }
   .typ { color: #404; font-weight: bold }
   .lit { color: #044 }
-  .pun, .opn, .clo { color: #440 }
+  .pun, .opn, .clo { color: #000 }
   .tag { color: #006; font-weight: bold }
   .atn { color: #404 }
   .atv { color: #060 }

@@ -140,6 +140,9 @@ li:last-child,
 
 .content pre {
 	white-space: pre;
+}
+
+.content code {
 	font-family: monospace;
 	font-size: 14px; 
 }

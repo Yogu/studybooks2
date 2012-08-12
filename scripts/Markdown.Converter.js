@@ -108,6 +108,8 @@ else
         pluginHooks.addNoop("postConversion"); // called with the final cooked HTML code. The result of this plugin hook is the actual output of makeHtml
         pluginHooks.addNoop("preSpanProcess"); // called whenever the contents of a block element have to be processed, before the Markdown span processors have been run
         pluginHooks.addNoop("postSpanProcess"); // called whenever the contents of a block element have to be processed, after the Markdown span processors have been run
+        pluginHooks.addNoop("preCodeConversion"); // called whenever code has to be converted to html
+        pluginHooks.addNoop("postCodeConversion"); // called whenever code has to be converted to html
 
 
         //
@@ -950,10 +952,10 @@ else
                     var codeblock = m1;
                     var nextChar = m2;
 
-                    codeblock = _EncodeCode(_Outdent(codeblock));
                     codeblock = _Detab(codeblock);
                     codeblock = codeblock.replace(/^\n+/g, ""); // trim leading newlines
                     codeblock = codeblock.replace(/\n+$/g, ""); // trim trailing whitespace
+                    codeblock = _EncodeCode(_Outdent(codeblock));
 
                     codeblock = "<pre><code>" + codeblock + "\n</code></pre>";
 
@@ -1026,6 +1028,9 @@ else
         }
 
         function _EncodeCode(text) {
+            text = pluginHooks.preCodeConversion(text);
+        	var original = text;
+            
             //
             // Encode/escape certain characters inside Markdown code runs.
             // The point is that in code, these characters are literals,
@@ -1041,6 +1046,8 @@ else
 
             // Now, escape characters that are magic in Markdown:
             text = escapeCharacters(text, "\*_{}[]\\", false);
+
+            text = pluginHooks.postCodeConversion(text, original);
 
             // jj the line above breaks this:
             //---

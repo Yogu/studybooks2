@@ -5,6 +5,22 @@
 	app.test = { };
 	app.test.ParserTest = function() {
 		var tests = [
+			{
+				label: 'code-simple',
+				source: '`text`',
+				output: '<p><code><span class="pln">text</span></code></p>'
+			},
+			{
+				label: 'code-conflate-decorations',
+				source: '`text text 2`',
+				output: '<p><code><span class="pln">text text</span><span class="lit">2</span></code></p>'
+			},
+			{
+				label: 'code-strings',
+				source: '`"abc\\ndef" abc`',
+				output: '<p><code><span class="str">"abc\\ndef"</span><span class="pln">abc</span></code></p>'
+			},
+		             
  			{
 				label: 'math-start',
 				source: 'a test: °a^2°',
@@ -119,7 +135,8 @@
 			for (var i = 0; i < tests.length; i++) {
 				var test = tests[i];
 				var output = parser.parse(test.source);
-				output = output.replace(/\s+/g, ' ').replace(/\s+(\W)/g, '$1').replace(/(\W)\s+/g, '$1').trim();
+				if (!test.pre)
+					output = output.replace(/\s+/g, ' ').replace(/\s+(\W)/g, '$1').replace(/(\W)\s+/g, '$1').trim();
 				var success = output == test.output;
 				if (!success)
 					overallSuccess = false;
