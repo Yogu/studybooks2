@@ -1,3 +1,5 @@
+"use strict";
+
 importScripts('ASCIIMathML.js', 'Markdown.Converter.js', 'parser.js');
 
 var waitTime = 0;

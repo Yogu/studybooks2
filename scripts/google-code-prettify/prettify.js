@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
 
 /**
  * @fileoverview
@@ -55,14 +56,14 @@
 // JSLint declarations
 /*global console, document, navigator, setTimeout, window */
 
-/**
- * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
- * UI events.
- * If set to {@code false}, {@code prettyPrint()} is synchronous.
- */
-window['PR_SHOULD_USE_CONTINUATION'] = true;
-
 (function () {
+   /**
+	 * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
+	 * UI events.
+	 * If set to {@code false}, {@code prettyPrint()} is synchronous.
+	 */
+  var useContinuation = false;
+	
   // Keyword lists for various languages.
   // We use things that coerce to strings to make them compact when minified
   // and to defeat aggressive optimizers that fold large string constants.
@@ -1370,7 +1371,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
     var prettyPrintRe = /\bprettyprint\b/;
 
     function doWork() {
-      var endTime = (window['PR_SHOULD_USE_CONTINUATION'] ?
+      var endTime = (useContinuation ?
                      clock['now']() + 250 /* ms */ :
                      Infinity);
       for (; k < elements.length && clock['now']() < endTime; k++) {
@@ -1444,19 +1445,19 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
     * @param {Function?} opt_whenDone if specified, called when the last entry
     *     has been finished.
     */
-  window['prettyPrintOne'] = prettyPrintOne;
+  self['prettyPrintOne'] = prettyPrintOne;
    /**
     * Pretty print a chunk of code.
     *
     * @param {string} sourceCodeHtml code as html
     * @return {string} code as html, but prettier
     */
-  window['prettyPrint'] = prettyPrint;
+  self['prettyPrint'] = prettyPrint;
    /**
     * Contains functions for creating and registering new language handlers.
     * @type {Object}
     */
-  window['PR'] = {
+  self['PR'] = {
         'createSimpleLexer': createSimpleLexer,
         'registerLangHandler': registerLangHandler,
         'sourceDecorator': sourceDecorator,

@@ -1,4 +1,6 @@
-Parser = function() {
+"use strict";
+
+self.Parser = function() {
 	var converter = new Markdown.Converter();
 	converter.hooks.set('preSpanProcess', function(a) {
 		a = (' ' + a + ' ').replace(/(\s)°((°°|[^°])+)°(\s)/g, function(total, before, expression, dummy, after) {
