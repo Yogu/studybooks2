@@ -35,7 +35,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 (at http://www.gnu.org/licences/lgpl.html) for more details.
  */
 
-ASCIIMathML = new (function() {
+ASCIIMathML = new (function(global) {
 	var automathrecognize = false; // writing "amath" on page makes this true
 	var checkForMathML = true; // check if browser can display MathML
 	var notifyIfNoMathML = true; // display note at top if no MathML
@@ -71,84 +71,6 @@ ASCIIMathML = new (function() {
 		return true;
 	}
 	
-	function SimpleNode(tagName, namespace) {
-		this.tagName = tagName;
-		this.namespace = namespace || "";
-		this.attributes = [];
-		this.childNodes = [];
-		this.parent = null;
-	}
-	
-	function encodeHTML(str) {
-		return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot');
-	}
-	
-	SimpleNode.prototype = {
-		setAttribute: function(name, value) {
-			this.attributes[name] = value;
-		},
-		
-		getAttribute: function(name) {
-			return this.attributes[name];
-		},
-		
-		appendChild: function(node) {
-			if (node) {
-				this.childNodes.push(node);
-				node.parent = this;
-			}
-			return this;
-		},
-		
-		getInnerHTML: function() {
-			return this.childNodes.map(function(node) { return node.getOuterHTML(); }).join('');
-		},
-		
-		getOuterHTML: function() {
-			if (this.tagName == 'fragment')
-				return this.getInnerHTML();
-			else {
-				var attr = "";
-				for (var name in this.attributes) {
-					attr += ' ' + name + '="' + encodeHTML(this.attributes[name]) + '"';
-				}
-				return '<' + this.tagName + attr + '>' + this.getInnerHTML() + '</' + this.tagName + '>';
-			}
-		}
-	};
-	
-	function TextNode(text) {
-		this.text = text;
-	}
-	
-	TextNode.prototype = {
-		getOuterHTML: function() {
-			return encodeHTML(this.text);
-		},
-		
-		getInnerHTML: function() {
-			return "";
-		}
-	}
-	
-	var document = {
-		createElement: function(tagName) {
-			return new SimpleNode(tagName);
-		},
-		
-		createElementNS: function(namespace, tagName) {
-			return new SimpleNode(tagName, namespace);
-		},
-		
-		createTextNode: function(text) {
-			return new TextNode(text);
-		},
-
-		createDocumentFragment: function() {
-			return new SimpleNode('fragment');
-		}
-	}
-
 	function createElementXHTML(t) {
 		return document.createElement(t);
 	}
@@ -4717,6 +4639,12 @@ underover = ((sym1.ttype == UNDEROVER) || (node.ttype == UNDEROVER));
 		str = str.replace(/\x20+/g, " ");
 		str = str.replace(/\s*\r\n/g, " ");
 		var tag = parseMath(str);
-		return tag.getOuterHTML();
+		if (tag.outerHTML)
+			return tag.outerHTML;
+		else {
+			var dummy = document.createElement('div');
+			dummy.appendChild(tag);
+			return dummy.innerHTML;
+		}
 	}
-})();
+})(self);
