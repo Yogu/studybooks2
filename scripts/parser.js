@@ -5,7 +5,7 @@ self.Parser = function() {
 	converter.hooks.set('preSpanProcess', function(a) {
 		a = (' ' + a + ' ').replace(/(\s)°((°°|[^°])+)°(\s)/g, function(total, before, expression, dummy, after) {
 			expression = expression.replace('°°', '°');
-			return before + ASCIIMathML.parse(expression.trim()) + after;
+			return before + '<span class="math">' + ASCIIMathML.parse(expression.trim()) + '</span>' + after;
 		}); 
 		return a;
 	});

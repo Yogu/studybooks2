@@ -152,14 +152,15 @@ li:last-child,
 	margin: 0;
 }
 
-.content math {
-	font-size: 14px;
-}
-
 .content code,
-.content math {
+.content .math {
 	background: #EEEEEE;
 	padding: 2px;
 	margin: 1px;
 	display: inline-block;
+}
+
+.content math {
+	display: block;
+	white-space: nowrap; /* workaround */
 }

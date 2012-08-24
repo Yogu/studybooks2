@@ -61,6 +61,10 @@ ASCIIMathML = new (function(global) {
 	// (default=body)
 
 	/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+	
+	function encodeHTML(str) {
+		return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot');
+	}
 
 	var isInitialized = false;
 	function init() {
@@ -4647,4 +4651,6 @@ underover = ((sym1.ttype == UNDEROVER) || (node.ttype == UNDEROVER));
 			return dummy.innerHTML;
 		}
 	}
+	
+	this.AMparseExpr = AMparseExpr;
 })(self);

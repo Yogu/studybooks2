@@ -24,57 +24,62 @@
  			{
 				label: 'math-start',
 				source: 'a test: °a^2°',
-				output: '<p>a test:<math title="a^2"><msup><mi>a</mi><mn>2</mn></msup></math></p>'
+				output: '<p>a test:<span class="math"><math title="a^2"><msup><mi>a</mi><mn>2</mn></msup></math></span></p>'
 			},
  			{
 				label: 'math-start2',
 				source: '°a°',
-				output: '<p><math title="a"><mi>a</mi></math></p>'
+				output: '<p><span class="math"><math title="a"><mi>a</mi></math></span></p>'
 			},
  			{
 				label: 'math-start3',
 				source: '°a°°°',
-				output: '<p><math title="a°"><mi>a</mi><mo>°</mo></math></p>'
+				output: '<p><span class="math"><math title="a°"><mi>a</mi><mo>°</mo></math></span></p>'
 			},
  			{
 				label: 'math-start4',
 				source: '°a° °°',
-				output: '<p><math title="a"><mi>a</mi></math>°°</p>'
+				output: '<p><span class="math"><math title="a"><mi>a</mi></math></span>°°</p>'
 			},
  			{
 				label: 'math-start5',
 				source: '°a°  °b°',
-				output: '<p><math title="a"><mi>a</mi></math><math title="b"><mi>b</mi></math></p>'
+				output: '<p><span class="math"><math title="a"><mi>a</mi></math></span><span class="math"><math title="b"><mi>b</mi></math></span></p>'
 			},
  			{
 				label: 'math-start6',
 				source: '°a° 1 °b°',
-				output: '<p><math title="a"><mi>a</mi></math>1<math title="b"><mi>b</mi></math></p>'
+				output: '<p><span class="math"><math title="a"><mi>a</mi></math></span>1<span class="math"><math title="b"><mi>b</mi></math></span></p>'
 			},
  			{
 				label: 'math-start7',
 				source: '°a° °',
-				output: '<p><math title="a"><mi>a</mi></math>°</p>'
+				output: '<p><span class="math"><math title="a"><mi>a</mi></math></span>°</p>'
 			},
  			{
 				label: 'math-start8',
 				source: '°a° a°b',
-				output: '<p><math title="a"><mi>a</mi></math>a°b</p>'
+				output: '<p><span class="math"><math title="a"><mi>a</mi></math></span>a°b</p>'
 			},
  			{
 				label: 'math-start9',
 				source: '360° °a° 370°',
-				output: '<p>360°<math title="a"><mi>a</mi></math>370°</p>'
+				output: '<p>360°<span class="math"><math title="a"><mi>a</mi></math></span>370°</p>'
 			},
  			{
 				label: 'math-sqrt',
 				source: '°sqrt2°',
-				output: '<p><math title="sqrt2"><msqrt><mn>2</mn></msqrt></math></p>'
+				output: '<p><span class="math"><math title="sqrt2"><msqrt><mn>2</mn></msqrt></math></span></p>'
 			},
  			{
 				label: 'math-pow',
 				source: '°a^2°',
-				output: '<p><math title="a^2"><msup><mi>a</mi><mn>2</mn></msup></math></p>'
+				output: '<p><span class="math"><math title="a^2"><msup><mi>a</mi><mn>2</mn></msup></math></span></p>'
+			},
+ 			{
+				label: 'math-parenthesis',
+				source: '°a/(2b)°',
+				output: '<p><span class="math"><math title="a/(2b)"><mfrac><mi>a</mi><mrow><mn>2</mn><mi>b</mi></mrow></mfrac></math></span></p>'
 			},
  			{
 				label: 'empty',
