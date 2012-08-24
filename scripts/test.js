@@ -20,6 +20,16 @@
 				source: '`"abc\\ndef" abc`',
 				output: '<p><code><span class="str">"abc\\ndef"</span><span class="pln">abc</span></code></p>'
 			},
+			{
+				label: 'code-html',
+				source: '`<b>a</b>`',
+				output: '<p><code><span class="tag">&lt;b&gt;</span><span class="pln">a</span><span class="tag">&lt;/b&gt;</span></code></p>'
+			},
+			{
+				label: 'code-html2',
+				source: '`<b></b>`',
+				output: '<p><code><span class="tag">&lt;b&gt;&lt;/b&gt;</span></code></p>'
+			},
 		             
  			{
 				label: 'math-start',

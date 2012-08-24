@@ -2,7 +2,7 @@
 
 (function(global) {
 	function encodeHTML(str) {
-		return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot');
+		return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 	}
 
 	function SimpleNode(nodeName, namespace) {

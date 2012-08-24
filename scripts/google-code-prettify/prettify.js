@@ -1515,9 +1515,11 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
     	var nextIndex = (i < decorationCount - 1) ? decorations[2 * i + 2] : sourceLength;
     	var begin = '<span class="' + className + '">';
     	var end = '</span>';
+    	var code = source.substr(index, nextIndex - index);
+    	code = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     	
     	// Add new source code
-    	output += begin + source.substr(index, nextIndex - index) + end;
+    	output += begin + code + end;
     }
     return output;
   }
