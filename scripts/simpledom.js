@@ -39,6 +39,14 @@
 			return this;
 		},
 		
+		replaceChild: function(newChild, oldChild) {
+			var index = this.childNodes.indexOf(oldChild);
+			if (index >= 0)
+				this.childNodes[index] = newChild;
+			else
+				throw new Error("replaceChild: oldChild is not a child node");
+		},
+		
 		removeChild: function(child) {
 			this.childNodes = this.childNodes.filter(function(n) { return n != child; });
 		},
@@ -87,9 +95,9 @@
 		
 		get nextSibling() {
 			if (this.parent) {
-				var index = parent.childNodes.indexOf(this);
-				if (index >= 0 && index < parent.childNodes.length - 1) {
-					return parent.childNodes[index + 1];
+				var index = this.parent.childNodes.indexOf(this);
+				if (index >= 0 && index < this.parent.childNodes.length - 1) {
+					return this.parent.childNodes[index + 1];
 				}
 			}
 			return null;
@@ -97,7 +105,7 @@
 		
 		get nextElementSibling() {
 			if (this.parent) {
-				var children = parent.children;
+				var children = this.parent.children;
 				var index = children.indexOf(this);
 				if (index >= 0 && index < children.length - 1) {
 					return children[index + 1];
@@ -108,9 +116,18 @@
 		
 		get previousSibling() {
 			if (this.parent) {
-				var children = parent.children;
+				var index = this.parent.childNodes.indexOf(this);
+				if (index > 0)
+					return this.parent.childNodes[index - 1];
+			}
+			return null;
+		},
+		
+		get previousElementSibling() {
+			if (this.parent) {
+				var children = this.parent.children;
 				var index = children.indexOf(this);
-				if (index >= 0 && index > 0) {
+				if (index > 0) {
 					return children[index - 1];
 				}
 			}
