@@ -92,6 +92,12 @@
 				output: '<p><span class="math"><math title="a/(2b)"><mfrac><mi>a</mi><mrow><mn>2</mn><mi>b</mi></mrow></mfrac></math></span></p>'
 			},
  			{
+				label: 'math-vector',
+				source: '°((1),(2))°',
+				output: '<p><span class="math"><math title="((1),(2))"><mrow><mo>(</mo><mtable><mtr><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>2</mn></mtd></mtr></mtable><mo>)</mo></mrow></math></span></p>'
+			},
+			
+ 			{
 				label: 'empty',
 				source: '',
 				output: '',
