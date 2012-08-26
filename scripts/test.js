@@ -96,6 +96,11 @@
 				source: '°((1),(2))°',
 				output: '<p><span class="math"><math title="((1),(2))"><mrow><mo>(</mo><mtable><mtr><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>2</mn></mtd></mtr></mtable><mo>)</mo></mrow></math></span></p>'
 			},
+ 			{
+				label: 'math-matrix',
+				source: '°([a, b],  [c, d])°',
+				output: '<p><span class="math"><math title="([a,b],[c,d])"><mrow><mo>(</mo><mtable><mtr><mtd><mi>a</mi></mtd><mtd><mi>b</mi></mtd></mtr><mtr><mtd><mi>c</mi></mtd><mtd><mi>d</mi></mtd></mtr></mtable><mo>)</mo></mrow></math></span></p>'
+			},
 			
  			{
 				label: 'empty',
