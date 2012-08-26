@@ -32,6 +32,8 @@
 						self.appendChild(node);
 					});
 				} else {
+					if (node.parent != null)
+						node.parent.removeChild(node);
 					this.childNodes.push(node);
 					node.parent = this;
 				}
@@ -41,9 +43,11 @@
 		
 		replaceChild: function(newChild, oldChild) {
 			var index = this.childNodes.indexOf(oldChild);
-			if (index >= 0)
+			if (index >= 0) {
 				this.childNodes[index] = newChild;
-			else
+				newChild.parent = this;
+				oldChild.parent = null;
+			} else
 				throw new Error("replaceChild: oldChild is not a child node");
 		},
 		
@@ -159,7 +163,7 @@
 		}
 	};
 	
-	self.document = {
+	global.document = {
 		createElement: function(tagName) {
 			return new SimpleNode(tagName);
 		},
